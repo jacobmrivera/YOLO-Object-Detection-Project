@@ -7,7 +7,7 @@ model = YOLO('runs\\detect\\train33\\weights\\best.pt')
 # results = model('img_178.jpg')  # results list
 model.predict('img_178.jpg', save=True, imgsz=1600, conf=0.1)
 
-print("~`````````````````````")
+print("~~~~~~~~~~~~~~~~~~~~~~~`")
 # # View results
 # for r in results:
 #     print(r.boxes)  # print the Boxes object containing the detection bounding boxesdataset_12/images/exp12__20151217_16963_img_361_parent.jpg
