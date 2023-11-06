@@ -1,2 +1,0 @@
-
-YOLO_CONFIG_PATH = ""
