@@ -1,0 +1,11 @@
+{
+
+    "yolo_config_path": ".",
+    "model_letter": "s",
+
+    "SCRIPT": "yolo_project\\detection_trainer.py",
+    "CONFIG_PATH": "yolo_project\\config_inter_15.yaml",
+    "MODEL": "yolov8s.pt",
+    "EPOCHS": 600
+
+}
