@@ -1,46 +1,44 @@
-import runner
 
+
+'''
+Reads json config file to create the .yaml file needed for YOLO training
+Generates information in .yaml based on json config file
+
+'''
 def make_config(json_config):
     out_name = json_config["training"]["data"]
     dataset_path = json_config["dataset_folder"]
 
-    config = open(f'{out_name}','w')
-    config.write(f'path: {dataset_path}\n')
-    config.write('train: train\n')
-    config.write('val: test\n')
-    config.write('names:\n')
+    yaml_config = open(f'{out_name}','w')
+    yaml_config.write(f'path: {dataset_path}\n')
+    yaml_config.write('train: train\n')
+    yaml_config.write('val: test\n')
+    yaml_config.write('names:\n')
 
-    # f = open(object_names_file,'r')
-
-    # for i, line in enumerate(f):
-    #     config.write(f'  {i}: {line.strip()}\n')
-    
-    # f.close()
     obj_num = json_config["constants"]["NUM_OBJS"]
     for i in range(obj_num):
-        config.write(f'  {i}: {json_config["objects"][str(i)].strip()}\n')
+        yaml_config.write(f'  {i}: {json_config["objects"][str(i)].strip()}\n')
 
-    config.close()
+    yaml_config.close()
+
+    return
 
 
-    # def make_config():
-    # out_name = runner.json_config["training"]["data"]
-    # dataset_path = runner.json_config["dataset_folder"]
 
-    # config = open(f'{out_name}','w')
-    # config.write(f'path: {dataset_path}\n')
-    # config.write('train: train\n')
-    # config.write('val: test\n')
-    # config.write('names:\n')
+def make_config(out_name, dataset_path, obj_num, obj_dict, json_config):
+    # out_name = json_config["training"]["data"]
+    # dataset_path = json_config["dataset_folder"]
 
-    # # f = open(object_names_file,'r')
+    yaml_config = open(f'{out_name}','w')
+    yaml_config.write(f'path: {dataset_path}\n')
+    yaml_config.write('train: train\n')
+    yaml_config.write('val: test\n')
+    yaml_config.write('names:\n')
 
-    # # for i, line in enumerate(f):
-    # #     config.write(f'  {i}: {line.strip()}\n')
-    
-    # # f.close()
-    # obj_num = runner.json_config["constants"]["NUM_OBJS"]
-    # for i in range(obj_num):
-    #     config.write(f'  {i}: {runner.json_config["objects"][str(i)]}\n')
+    # obj_num = json_config["constants"]["NUM_OBJS"]
+    for i in range(obj_num):
+        yaml_config.write(f'  {i}: {obj_dict[i].strip()}\n')
 
-    # config.close()
+    yaml_config.close()
+
+    return

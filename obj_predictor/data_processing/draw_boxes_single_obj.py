@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 INPUT_DIR = "C:\\Users\\multimaster\\Desktop\\Final_dataset_11_13_23\\11_13_23\\obj_level_data\\{}"
 
-def draw_bounding_boxes(input_file):
+def draw_bounding_boxes(input_file, output_dir=''):
     # Create 'drawn' subdirectory if it doesn't exist
     drawn_dir = os.path.join(input_file, "drawn")  
     os.makedirs(drawn_dir, exist_ok=True)

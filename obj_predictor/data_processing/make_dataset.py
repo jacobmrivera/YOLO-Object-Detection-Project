@@ -1,6 +1,9 @@
 import os
 import shutil
 
+
+
+# given a folder of labels and images, copy data into dataset_path folder
 def make_dataset(labels_folder, images_folder, dataset_path):
 
     os.makedirs(dataset_path, exist_ok=True)
@@ -19,8 +22,7 @@ def make_dataset(labels_folder, images_folder, dataset_path):
         labels_subset = f'{labels_folder}\\{str(i)}\\'
 
         copy_images_labels(labels_subset, image_subset, dataset_path)
- 
-      
+
 # change to copy both labels & images 
 def copy_images_labels(labels_folder,images_folder,dataset_path):
     

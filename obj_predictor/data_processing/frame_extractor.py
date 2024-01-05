@@ -1,7 +1,12 @@
 import cv2
 import os
 
-def process_video(video_path, output_folder):
+
+# if number of frames to be over 04d, then change the 4 in the f-string to the number of digits
+
+
+
+def process_video(video_path, output_folder="", frames_prefix="frame_", debug=0):
     # Open the video file
     video = cv2.VideoCapture(video_path)
 
@@ -12,6 +17,8 @@ def process_video(video_path, output_folder):
 
     frame_count = 0
 
+    if output_folder == "":
+        output_folder = video_path.split("\\")[-1].split(".")[0] + "_frames"
     # Create the output folder if it doesn't exist
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
@@ -25,12 +32,13 @@ def process_video(video_path, output_folder):
             break
 
         # Save the frame as an image in the output folder
-        frame_filename = f"frame_{frame_count:04d}.jpg"  # You can adjust the filename pattern
+        frame_filename = f"{frames_prefix}{frame_count:04d}.jpg"  # You can adjust the filename pattern
         frame_path = os.path.join(output_folder, frame_filename)
         cv2.imwrite(frame_path, frame)
 
+
         # Display the frame (optional)
-        cv2.imshow('Frame', frame)
+        if debug: cv2.imshow('Frame', frame)
 
         # Increment frame count
         frame_count += 1
@@ -46,7 +54,7 @@ def process_video(video_path, output_folder):
     print(f"Processed {frame_count} frames. Saved in {output_folder}")
 
 # Replace 'video_file_path.mp4' with the path to your video file
-video_path = "C:\\Users\\multimaster\\Desktop\\Final_dataset_11_13_23\\supplementary data\\bulldozer_firetruck.mp4"
+# video_path = "C:\\Users\\multimaster\\Desktop\\Final_dataset_11_13_23\\supplementary data\\bulldozer_firetruck.mp4"
 
-output_folder = "C:\\Users\\multimaster\\Desktop\\Final_dataset_11_13_23\\supplementary data\\bulldozer_firetruck_frames"
-process_video(video_path, output_folder)
+# output_folder = "C:\\Users\\multimaster\\Desktop\\Final_dataset_11_13_23\\supplementary data\\bulldozer_firetruck_frames"
+# process_video(video_path, output_folder)
