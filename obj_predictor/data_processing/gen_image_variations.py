@@ -1,22 +1,22 @@
 from PIL import Image
 
-def flip_image_vertically(input_image_path, output_image_path):
-    try:
-        # Open the image file
-        with Image.open(input_image_path) as img:
-            # Flip the image vertically
-            flipped_img = img.transpose(Image.FLIP_TOP_BOTTOM)
+# def flip_image_vertically(input_image_path, output_image_path):
+#     try:
+#         # Open the image file
+#         with Image.open(input_image_path) as img:
+#             # Flip the image vertically
+#             flipped_img = img.transpose(Image.FLIP_TOP_BOTTOM)
             
-            # Save the flipped image
-            flipped_img.save(output_image_path)
-            print(f"Flipped image saved as {output_image_path}")
-    except IOError:
-        print("Unable to load image")
+#             # Save the flipped image
+#             flipped_img.save(output_image_path)
+#             print(f"Flipped image saved as {output_image_path}")
+#     except IOError:
+#         print("Unable to load image")
 
 # Usage example:
 input_image = "input_image.jpg"  # Replace with your input image file path
 output_image = "flipped_image.jpg"  # Replace with your desired output image file path
-flip_image_vertically(input_image, output_image)
+# flip_image_vertically(input_image, output_image)
 
 
 
@@ -33,7 +33,13 @@ def flip_image_vertically(input_image_path, output_image_path):
         with Image.open(input_image_path) as img:
             # Flip the image vertically
             flipped_img = ImageOps.flip(img)
-            
+
+            # Create the output directory if it does not exist
+            output_img_dir = os.path.dirname(output_image_path)
+
+            if not os.path.exists(output_img_dir):
+                os.makedirs(output_img_dir)
+
             # Save the flipped image
             flipped_img.save(output_image_path)
             print(f"Flipped image saved as {output_image_path}")
@@ -50,7 +56,13 @@ def mirror_image_horizontally(input_image_path, output_image_path):
         with Image.open(input_image_path) as img:
             # Flip the image horizontally using mirror
             flipped_img = ImageOps.mirror(img)
-            
+
+            # Create the output directory if it does not exist
+            output_img_dir = os.path.dirname(output_image_path)
+
+            if not os.path.exists(output_img_dir):
+                os.makedirs(output_img_dir)
+
             # Save the flipped image
             flipped_img.save(output_image_path)
             print(f"Flipped image saved as {output_image_path}")
@@ -125,8 +137,26 @@ def draw_bounding_box(img_path, output_path, box_vals, box_string):
     cv2.imwrite(output_path, existing_image)
 
 
+def mirror_bounding_box_y_axis(box_vals, image_width, image_height):
+    # Calculate original bounding box coordinates
+    left = box_vals[0] - box_vals[2] / 2
+    top = box_vals[1] - box_vals[3] / 2
+    right = box_vals[0] + box_vals[2] / 2
+    bottom = box_vals[1] + box_vals[3] / 2
 
-def mirror_bounding_box(box_vals, image_width, image_height):
+    # Mirror the bounding box coordinates across the center of the image
+    mirrored_top = 1 - bottom
+    mirrored_bottom = 1 - top
+
+    # New mirrored bounding box coordinates
+    mirrored_center_y = (mirrored_top + mirrored_bottom) / 2
+    mirrored_height = mirrored_bottom - mirrored_top
+
+    # Return the mirrored bounding box coordinates in YOLO format
+    return [box_vals[0], mirrored_center_y, box_vals[2], mirrored_height]
+
+
+def mirror_bounding_box_x_axis(box_vals, image_width, image_height):
     # Calculate original bounding box coordinates
     left = box_vals[0] - box_vals[2] / 2
     top = box_vals[1] - box_vals[3] / 2
@@ -145,9 +175,71 @@ def mirror_bounding_box(box_vals, image_width, image_height):
     return [mirrored_x_center, box_vals[1], mirrored_width, box_vals[3]]
 
 
+def mirror_bounding_box_xy(box_vals, image_width, image_height):
+    # Calculate original bounding box coordinates
+    left = box_vals[0] - box_vals[2] / 2
+    top = box_vals[1] - box_vals[3] / 2
+    right = box_vals[0] + box_vals[2] / 2
+    bottom = box_vals[1] + box_vals[3] / 2
+
+    # Mirror the bounding box coordinates across the x-axis
+    mirrored_left = 1 - right
+    mirrored_right = 1 - left
+
+    # Mirror the bounding box coordinates across the y-axis
+    mirrored_top = 1 - bottom
+    mirrored_bottom = 1 - top
+
+    # New mirrored bounding box coordinates
+    mirrored_x_center = (mirrored_left + mirrored_right) / 2
+    mirrored_y_center = (mirrored_top + mirrored_bottom) / 2
+    mirrored_width = mirrored_right - mirrored_left
+    mirrored_height = mirrored_bottom - mirrored_top
+
+    # Return the mirrored bounding box coordinates
+    return [mirrored_x_center, mirrored_y_center, mirrored_width, mirrored_height]
 
 
 
+def get_image_resolution(image_path):
+    with Image.open(image_path) as img:
+        width, height = img.size
+    return width, height
+
+
+
+# transform each line of annotation text file
+def process_text_file(input_file, output_file, width, height, direction):
+    # Read content from the input file
+    with open(input_file, 'r') as infile:
+        lines = infile.readlines()
+
+    # iterate over lines from input text file
+    for i in range(len(lines)):
+        curr_line = lines[i].rstrip('\n')
+        curr_line_arr = curr_line.split(' ')
+
+        # might be a problem with indexing to avoid the obj number (first element)
+        if direction == 'y':
+            bb_array = mirror_bounding_box_y_axis(curr_line_arr[1:], width, height)
+        elif direction == 'x':
+            bb_array = mirror_bounding_box_x_axis(curr_line_arr[1:], width, height)
+        elif direction == 'xy':
+            bb_array = mirror_bounding_box_xy(curr_line_arr[1:], width, height)
+        # recreate string to write to output file
+        lines[i] = f"{curr_line_arr[0]} {bb_array[0]} {bb_array[1]} {bb_array[2]} {bb_array[3]}\n"
+
+    # Create the output directory if it does not exist
+    output_txt_dir = os.path.dirname(output_file)
+
+    if not os.path.exists(output_txt_dir):
+        os.makedirs(output_txt_dir)
+
+    # Write the modified content to the output file
+    with open(output_file, 'w') as outfile:
+        outfile.writelines(lines)
+
+    return
 
 
 # Usage example:
@@ -165,7 +257,7 @@ bounding_box = [x_center, y_center, width, height]
 
 draw_bounding_box(input_image, "luffy_album_bb.png",bounding_box, "LUFFY!!!")
 
-mirrod_bb = mirror_bounding_box(bounding_box, 3024, 4032)
+mirrod_bb = mirror_bounding_box_x_axis(bounding_box, 3024, 4032)
 
 
 mirror_image_horizontally(input_image, "luffy_album_flip_vertical.png")
