@@ -241,7 +241,7 @@ def process_text_file(input_file, output_file, width, height, direction):
 
     return
 
-
+'''
 # Usage example:
 input_image = "luffy_album.png"  # Replace with your input image file path
 output_image = "luffy_album_out.png"  # Replace with your desired output image file path
@@ -265,7 +265,7 @@ mirror_image_horizontally(input_image, "luffy_album_flip_vertical.png")
 draw_bounding_box("luffy_album_flip_vertical.png", "luffy_album_flip_vertical.png",mirrod_bb, "LUFFY!!!")
 
 
-
+'''
 
 # # Example usage:
 # x_center = 0.5  # x-coordinate of the center

@@ -2,7 +2,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 
-INPUT_DIR = "C:\\Users\\multimaster\\Desktop\\Final_dataset_11_13_23\\11_13_23\\obj_level_data\\{}"
+# INPUT_DIR = "C:\\Users\\multimaster\\Desktop\\Final_dataset_11_13_23\\11_13_23\\obj_level_data\\{}"
 
 def draw_bounding_boxes(input_file, output_dir=''):
     # Create 'drawn' subdirectory if it doesn't exist
@@ -65,8 +65,8 @@ def draw_bounding_boxes(input_file, output_dir=''):
         else:
             print(f"Image {image_name} not found.")
 
-# Example usage:
-for i in range(28):
-    print("Inside Directory: {}".format(i))
-    input_txt_file = INPUT_DIR.format(i)
-    draw_bounding_boxes(input_txt_file)
+# # Example usage:
+# for i in range(28):
+#     print("Inside Directory: {}".format(i))
+#     input_txt_file = INPUT_DIR.format(i)
+#     draw_bounding_boxes(input_txt_file)
