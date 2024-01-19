@@ -2,7 +2,7 @@
 
 # Import necessary modules or scripts
 import argparse
-import obj_predictor.data_processing.blur as blur_module
+import obj_predictor.data_processing.blur as blur
 
 def main():
     parser = argparse.ArgumentParser(description="Get the blur value of a single image")
@@ -12,7 +12,7 @@ def main():
     input_img = args.input_img
 
     # Call your main function or execution logic
-    blur_val = blur_module.get_blur_level(input_img)
+    blur_val = blur.get_blur_level(input_img)
 
     print(f"Blur value of {input_img}: {blur_val}")
 
