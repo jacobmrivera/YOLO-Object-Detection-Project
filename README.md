@@ -6,7 +6,6 @@ Scripts and pipeline to support training a YOLOv8 Object Detection model from cu
 
 Follow these steps to set up your Python environment for working with a specific module.
 
-## Step 1: Create a Virtual Environment
 
 ```bash
 # Navigate to your project directory
@@ -35,3 +34,5 @@ pip install .
 deactivate
 
 # or go on to run scripts.
+
+```
