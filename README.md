@@ -1,6 +1,10 @@
 # YOLO Object Detection Project
 Scripts and pipeline to support training a YOLOv8 Object Detection model from custom dataset. 
 
+Runnable scripts can be found under scripts/ dir. It is not requires to have an active venv, as the bash scripts
+will activate and deactivate the venv automatically. If using a Windows machine, \ vs / will have to be hand edited.
+In future edits, this might become a feature but for now, sorry!
+
 
 # Setting Up Your Python Environment
 
@@ -8,9 +12,7 @@ Follow these steps to set up your Python environment for working with a specific
 
 
 ```bash
-# Navigate to your project directory
-cd /path/to/your/project
-
+# Navigate to the top level of this project directory
 # Create a virtual environment named 'venv'
 python3 -m venv venv
 
@@ -20,8 +22,7 @@ source venv/bin/activate
 # Install requirements
 pip install -r requirements.txt
 
-# Install this package for easy usage
-# the -e flag for development mode of the python package
+# Install this package for easy usage the -e flag for development mode of the python package,
 # which prevents user from reinstalling it after every change.
 pip install -e .
 
