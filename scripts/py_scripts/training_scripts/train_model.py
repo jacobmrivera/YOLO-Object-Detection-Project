@@ -51,7 +51,7 @@ def main():
     op.data_processing.split_data_pipe(source_dir=json_config['dataset_folder'], output_dir=json_config['dataset_folder'], split=json_config['split'], seed=json_config['constants']['SEED'])
 
     # # predicting_videos.predict_vid_from_json(json_config)
-    op.training.train_model(json_config)
+    op.training.train_model_json(json_config)
     # trainer.train_model(json_config)
 
     return

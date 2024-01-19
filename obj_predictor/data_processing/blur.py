@@ -3,6 +3,11 @@ import os
 
 
 
+
+
+'''
+Generates and returns blur value for a single image
+'''
 def get_blur_level(image_path):
     img = cv2.imread(image_path)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -12,6 +17,17 @@ def get_blur_level(image_path):
 
 
 
+
+'''
+Generates blur values for each image in a directory
+Outputs a text file containing the blur values and overall blur ratio
+
+Only set to handle .jpg images. If other image types are used, change
+the following line: 'if image[-4:] != ".jpg": continue' 
+to the appropriate file extension.
+
+
+'''
 def batch_gen_blur_levels(input_dir, output_dir, threshold):
     img_count = 0
 
@@ -44,7 +60,7 @@ def batch_gen_blur_levels(input_dir, output_dir, threshold):
     with open(out_path, 'r') as file:
         existing_content = file.read()
 
-    to_add = f"\n\n{blurry_count} blurry images out of {img_count}\nRatio: { blurry_count/ img_count}"
+    to_add = f"\n\n{blurry_count} blurry images out of {img_count}\nRatio: { blurry_count/ img_count}\n"
     all_content = to_add + existing_content
 
     # Write the combined content back to the file

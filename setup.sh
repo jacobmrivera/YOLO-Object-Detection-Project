@@ -33,6 +33,7 @@ fi
 # Activate virtual environment based on the operating system
 if [[ "$OSTYPE" == "darwin"* || "$OSTYPE" == "linux-gnu" ]]; then
     source venv/bin/activate
+    echo "venv activated!"
 elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
     source venv\\Scripts\\activate
     echo "venv activated!"
@@ -42,7 +43,7 @@ else
 fi
 
 python -m pip install --upgrade pip
-# # Install requirements
+# # # Install requirements
 pip install -r requirements.txt
 
 # Deactivate virtual environment

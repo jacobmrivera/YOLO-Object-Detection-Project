@@ -2,7 +2,8 @@
 
 # Import necessary modules or scripts
 import argparse
-import obj_predictor.data_processing.detect_blur as blur_module
+import obj_predictor as op
+# import obj_predictor.data_processing.detect_blur as blur_module
 
 def main():
     parser = argparse.ArgumentParser(description="Get a txt file of blurry levels of all images in dir")
@@ -16,7 +17,10 @@ def main():
     output_dir = args.output_dir
 
     # Call your main function or execution logic
-    blur_module.batch_gen_blur_levels(input_dir, output_dir, threshold)
+    op.data_processing.batch_gen_blur_levels(input_dir, output_dir, threshold)
+    
+    
+    # data_processing. blur_module.batch_gen_blur_levels(input_dir, output_dir, threshold)
 
 if __name__ == "__main__":
     main()
