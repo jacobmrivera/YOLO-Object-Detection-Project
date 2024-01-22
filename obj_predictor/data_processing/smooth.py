@@ -2,10 +2,9 @@ import os
 import re
 
 '''
-- func to process one video and one txt at a time
-- func to provide one frame and one txt to above func with all frames/txts
-
-
+Created by Jacob Rivera
+Spring 2024
+Last edit: 1/22/2024
 
 
 '''
@@ -35,14 +34,6 @@ def list_files_in_directory(directory_path, ending):
     except OSError as e:
         print(f"Error: {e}")
         return []
-
-
-
-# directory_path = "C:\\Users\\jacob\\Box\\frames"
-# file_list = list_files_in_directory(directory_path, '.jpg')
-# print(file_list)
-
-
 
 
 
@@ -89,16 +80,6 @@ def txt_to_dict(file_path):
 
 
 
-
-# Example usage:
-start_point = (.5, .5, .1, .1)
-end_point = (.6, .6, .2, .2)
-num_equidistant_points = 6
-
-# result = get_equidistant_points(start_point, end_point, num_equidistant_points)
-# print(result)
-
-
 # given a text file, bounding box annotation line will be added
 def add_line_to_txt(file_path, key, arr):
     with open(file_path, 'a') as file:
@@ -138,25 +119,14 @@ def check_window(curr_file, next_files):
                 break
     
 
-    
-
-
-# my_dict = txt_to_dict("Z:\\Jacob\\lobster_ostrich\\labels\\lob_6701.txt")
-# check_window("C:\\Users\\jacob\\Desktop\\practice\\2.txt", [ "C:\\Users\\jacob\\Desktop\\practice\\3.txt",  "C:\\Users\\jacob\\Desktop\\practice\\4.txt"])
-# if 0 in my_dict:
-#     print(" is in")
-
-
 # input: 
 #   input_dir: directory containing text files
 #   max_skips: number of frames to fill in missing objects
 # output:
 #   none
-
 def smooth_annotations(input_dir, max_skip=2):
 
     text_files = list_files_in_directory(input_dir, '.txt')
-
     text_files = [os.path.join(input_dir, j) for j in text_files]
     # print(text_files)
 
@@ -167,6 +137,6 @@ def smooth_annotations(input_dir, max_skip=2):
 
         check_window(text_files[i], look_aheads)
 
+# smooth_annotations("Z:\\Jacob\\lobster_ostrich\\labels")
 
 
-smooth_annotations("Z:\\Jacob\\lobster_ostrich\\labels")
