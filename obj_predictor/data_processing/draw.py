@@ -2,6 +2,15 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 
+'''
+
+need to make functions that can draw bounding boxes, 
+    from one frame and one text file,
+then a func to batch process the above function
+Then a function to stich all the frames together into a video
+
+'''
+
 
 rgb_dict = {
     0: 'rgb(236, 3, 252)',
