@@ -1,6 +1,6 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
-
+from obj_predictor.data_processing.smooth import txt_to_dict
 
 '''
 
@@ -40,7 +40,8 @@ rgb_dict = {
     24: 'rgb(255, 255, 128)',
     25: 'rgb(255, 128, 255)',
     26: 'rgb(128, 255, 255)',
-    27: 'rgb(192, 192, 192)'
+    27: 'rgb(192, 192, 192)',
+    47: 'rgb(192, 192, 192)'
 }
 
 
@@ -112,3 +113,65 @@ def draw_bounding_boxes(input_file, output_dir=''):
 #     print("Inside Directory: {}".format(i))
 #     input_txt_file = INPUT_DIR.format(i)
 #     draw_bounding_boxes(input_txt_file)
+
+
+
+def draw_single_frame(frame, labels, drawn_frame):
+
+    with open(labels, 'r') as file:
+        lines = file.readlines()
+
+    line_width = 3
+    # Define font and size
+    font = ImageFont.truetype("arial.ttf", 15)  # Adjust font and size as needed
+
+    # RGB: (236, 3, 252)
+    # Draw text with outline
+    text_color = 'black'
+    # outline_color = 'rgb(236, 3, 252)'
+    outline_width = 3 
+
+    img = Image.open(frame)
+    draw = ImageDraw.Draw(img)
+
+    for line in lines:
+        # Split the line into components
+        components = line.strip().split()
+        # image_name = components[0].replace('.txt', '.jpg')
+        obj_num = int(components[0])
+        bbox_info = list(map(float, components[1:]))
+
+        # Get image width and height
+        # img_width, img_height = img.size
+
+        # Convert bounding box coordinates to YOLO format
+        x_center = bbox_info[0] #* img_width
+        y_center = bbox_info[1] #* img_height
+        box_width = bbox_info[2] #* img_width
+        box_height = bbox_info[3] #* img_height
+
+        # Calculate box coordinates
+        x_min = x_center - (box_width / 2)
+        y_min = y_center - (box_height / 2)
+        x_max = x_center + (box_width / 2)
+        y_max = y_center + (box_height / 2)
+
+        color = rgb_dict[obj_num] if obj_num in rgb_dict else 'rgb(236, 3, 252)'
+
+        box_text = f" obj#: {obj_num} "
+        text_bbox = draw.textbbox((0, 0), box_text, font)
+
+       
+        draw.rectangle([x_min, y_min, x_max, y_max], outline=color, width=line_width)
+
+
+        left, top, right, bottom = draw.textbbox((x_min, y_min - 15), box_text, font=font)
+        draw.rectangle((left-5, top-5, right+5, bottom+5), fill=color)
+        draw.text((x_min, y_min - 15), box_text, font=font, fill="black")
+
+        # Draw bounding box
+
+    img.save(drawn_frame)
+ 
+
+draw_single_frame("C:\\Users\\jacob\\Desktop\\practice\\apples.jpg", "C:\\Users\\jacob\\Desktop\\practice\\preds.txt","C:\\Users\\jacob\\Desktop\\practice\\apples_drawn.jpg" )

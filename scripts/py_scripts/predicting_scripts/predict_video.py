@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import json
 import argparse
-import obj_predictor.predicting.predicting_videos as predicting_videos
+import obj_predictor.predicting.predict as predict
 
 '''
 Created by Jacob Rivera
@@ -44,7 +44,7 @@ def main():
     except (FileNotFoundError, json.JSONDecodeError):
         print("Error reading config file.")
 
-    predicting_videos.predict_video(model_path, video_input, video_output, width, height, confidence)
+    predict.predict_video(model_path, video_input, video_output, width, height, confidence)
 
     return
 
