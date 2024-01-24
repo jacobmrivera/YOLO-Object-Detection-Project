@@ -6,9 +6,9 @@
 
 
 # Define the paths
-input_dir="/Users/jacobrivera/Desktop/blur_practice"
-output_dir="/Users/jacobrivera/Desktop/blur_practice"
-threshold=50  # Default is 50, 0 == really blurry, 200 == really sharp
+input_dir="/Users/jacobrivera/Library/CloudStorage/Box-Box/frames"
+output_dir="/Users/jacobrivera/Library/CloudStorage/Box-Box/frames"
+threshold=100  # Default is 50, 0 == really blurry, 200 == really sharp
 
 
 source venv/bin/activate

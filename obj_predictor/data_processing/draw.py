@@ -121,18 +121,32 @@ def draw_single_frame(frame, labels, drawn_frame):
     with open(labels, 'r') as file:
         lines = file.readlines()
 
-    line_width = 3
-    # Define font and size
-    font = ImageFont.truetype("arial.ttf", 15)  # Adjust font and size as needed
 
     # RGB: (236, 3, 252)
     # Draw text with outline
-    text_color = 'black'
+    # text_color = 'black'
     # outline_color = 'rgb(236, 3, 252)'
-    outline_width = 3 
+    # outline_width = 5
 
     img = Image.open(frame)
     draw = ImageDraw.Draw(img)
+
+
+    img_width, img_height = img.size
+
+    # Calculate the font size based on image size
+    base_font_size = 15  # Set your base font size here
+    font_size = int(base_font_size * min(img_width, img_height) / 800)  # Adjust the divisor as needed
+
+    base_line_width = 3
+    line_width = int(base_line_width * min(img_width, img_height) / 800)  # Adjust the divisor as needed
+
+    base_padding = 3
+    padding = int(base_padding * min(img_width, img_height) / 800)  # Adjust the divisor as needed
+
+    # Define font and size
+    font = ImageFont.truetype("data/fonts/lato/Lato-Bold.ttf", font_size)  # Adjust font and size as needed
+
 
     for line in lines:
         # Split the line into components
@@ -142,7 +156,6 @@ def draw_single_frame(frame, labels, drawn_frame):
         bbox_info = list(map(float, components[1:]))
 
         # Get image width and height
-        # img_width, img_height = img.size
 
         # Convert bounding box coordinates to YOLO format
         x_center = bbox_info[0] #* img_width
@@ -159,19 +172,20 @@ def draw_single_frame(frame, labels, drawn_frame):
         color = rgb_dict[obj_num] if obj_num in rgb_dict else 'rgb(236, 3, 252)'
 
         box_text = f" obj#: {obj_num} "
-        text_bbox = draw.textbbox((0, 0), box_text, font)
-
-       
-        draw.rectangle([x_min, y_min, x_max, y_max], outline=color, width=line_width)
-
-
-        left, top, right, bottom = draw.textbbox((x_min, y_min - 15), box_text, font=font)
-        draw.rectangle((left-5, top-5, right+5, bottom+5), fill=color)
-        draw.text((x_min, y_min - 15), box_text, font=font, fill="black")
+        # text_bbox = draw.textbbox((0, 0), box_text, font)
 
         # Draw bounding box
+        draw.rectangle([x_min, y_min + font_size, x_max, y_max], outline=color, width=line_width)
+
+        # Draw text
+        left, top, right, bottom = draw.textbbox((x_min, y_min - 15), box_text, font=font)
+        draw.rectangle((left, top, right+line_width, bottom+line_width), fill=color)
+        draw.text((x_min, y_min), box_text, font=font, fill="white")
+
 
     img.save(drawn_frame)
- 
 
-draw_single_frame("C:\\Users\\jacob\\Desktop\\practice\\apples.jpg", "C:\\Users\\jacob\\Desktop\\practice\\preds.txt","C:\\Users\\jacob\\Desktop\\practice\\apples_drawn.jpg" )
+
+# draw_single_frame("C:\\Users\\jacob\\Desktop\\practice\\apples.jpg", "C:\\Users\\jacob\\Desktop\\practice\\preds.txt","C:\\Users\\jacob\\Desktop\\practice\\apples_drawn.jpg" )
+draw_single_frame("practice_data/apples.jpeg", "practice_data/apples_pred.txt","practice_data/apples_hand_drawn.jpeg" )
+

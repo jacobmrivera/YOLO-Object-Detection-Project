@@ -1,15 +1,18 @@
 import cv2
 from ultralytics import YOLO
 import os
+from PIL import Image
 
 
 
-
-def predict_video(model_path, video_input, video_output='', width=1280, height=720, confidence=0.5):
+def predict_video_yolo_drawn(model_path, video_input, video_output='', confidence=0.5):
 
     model = YOLO(model_path)
-
     cap = cv2.VideoCapture(video_input)
+
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
     out = cv2.VideoWriter(video_output, cv2.VideoWriter_fourcc(*'mp4v'), int(cap.get(cv2.CAP_PROP_FPS)), (width, height))
 
     # Loop through the video frames
@@ -19,7 +22,7 @@ def predict_video(model_path, video_input, video_output='', width=1280, height=7
 
         if success:
             # Run YOLOv8 inference on the frame
-            results = model(frame, imgsz=width, conf=confidence,)
+            results = model(frame, conf=confidence,)
 
             # Visualize the results on the frame
             annotated_frame = results[0].plot()
@@ -43,21 +46,20 @@ def predict_video(model_path, video_input, video_output='', width=1280, height=7
 
 # calls yolo on every frame, and saves predictions to txt file
 # a frames and labels folder are made, so that a video can be made from them
-def predict_every_frame(model_path, video_input, output_dir='', width=1280, height=720, confidence=0.5):
+def predict_vid_save_annot(model_path, video_input, output_dir='', confidence=0.5, save_frames=False):
 
     model = YOLO(model_path)
-
     cap = cv2.VideoCapture(video_input)
-    # out = cv2.VideoWriter(video_output, cv2.VideoWriter_fourcc(*'mp4v'), int(cap.get(cv2.CAP_PROP_FPS)), (width, height))
 
     prefix = video_input.split('\\')[-1].split('.')[0]
-
-    frames_output = os.path.join(output_dir, 'frames')
-    txts_output = os.path.join(output_dir, 'labels')
+    texts_output = os.path.join(output_dir, 'pred_labels')
 
     os.makedirs(output_dir, exist_ok=True)
-    os.makedirs(frames_output, exist_ok=True)
-    os.makedirs(txts_output, exist_ok=True)
+    os.makedirs(texts_output, exist_ok=True)
+
+    if save_frames:
+        frames_output = os.path.join(output_dir, 'frames')
+        os.makedirs(frames_output, exist_ok=True)
 
     count = 0
 
@@ -68,17 +70,18 @@ def predict_every_frame(model_path, video_input, output_dir='', width=1280, heig
 
         if success:
             # Run YOLOv8 inference on the frame
-            results = model(frame, imgsz=width, conf=confidence,)
+            results = model(frame, conf=confidence,)
 
             predicted_bb = predictions_to_arr(results)
             # txt = "C:\\Users\\jacob\\Desktop\\practice\\preds.txt"
 
-            txt_path = os.path.join(txts_output, prefix + f"_{count}")
+            txt_path = os.path.join(texts_output, prefix + f"_{count}")
             predicts_to_txt(predicted_bb, txt_path)
 
-            # Save the frame as an image
-            img_path = os.path.join(txts_output, prefix + f"_{count}")
-            cv2.imwrite(img_path, frame)
+            if save_frames:
+                # Save the frame as an image
+                img_path = os.path.join(texts_output, prefix + f"_{count}")
+                cv2.imwrite(img_path, frame)
 
             count += 1
 
@@ -88,7 +91,6 @@ def predict_every_frame(model_path, video_input, output_dir='', width=1280, heig
 
     # Release the video capture object and close the display window
     cap.release()
-    # out.release()
     cv2.destroyAllWindows()
 
     return
@@ -97,7 +99,7 @@ def predict_every_frame(model_path, video_input, output_dir='', width=1280, heig
 
 def predictions_to_arr(results):
     predicted_bb = []
-    boxes = results[0].boxes 
+    boxes = results[0].boxes
 
     for i in range(len(boxes.cls)):
         # print(boxes.cls[i].item(), boxes.xywh[i].tolist())
@@ -113,30 +115,31 @@ def predicts_to_txt(preds, output_file):
 
 
 
-# def predict_frame(frame, model, img_size, confidence):
-#     # frame = "C:\\Users\\jacob\\Desktop\\practice\\apples.jpg"
+def predict_image_save_annot(img, model, confidence= 0.5, yolo_draw=False):
 
-#     # model = YOLO("yolov8s.pt")
-#     # results = model(frame)
-#     results = model(frame, imgsz=img_size, conf=confidence,)
-#     # print(results.boxes)
+    model = YOLO(model)
 
-#     predicted_bb = []
+    results = model(img, conf=confidence)
 
-#     # for result in results:
-#     boxes = results[0].boxes 
+     # Visualize the results on the frame
+    annotated_frame = results[0].plot()
 
-#     for i in range(len(boxes.cls)):
+    # Save the frame as an image
+    if yolo_draw:
+        out_img = img.split('.')[0] + "_pred.jpg"
+        cv2.imwrite(out_img, annotated_frame)
 
-#         # print(boxes.cls[i].item(), boxes.xywh[i].tolist())
-#         predicted_bb.append([boxes.cls[i].item(), boxes.xywh[i].tolist()])
-            
-#     txt_name = frame.split('\\')[-1].split('.')[0]
-#     # print(txt_name)
-#     txt = "C:\\Users\\jacob\\Desktop\\practice\\preds.txt"
-#     predicts_to_txt(predicted_bb, txt)
+    predicted_bb = []
 
+    # for result in results:
+    boxes = results[0].boxes
 
+    for i in range(len(boxes.cls)):
+        predicted_bb.append([boxes.cls[i].item(), boxes.xywh[i].tolist()])
+
+    text_name =  img.split('.')[0] + '_pred.txt'
+    predicts_to_txt(predicted_bb, text_name)
 
 
 # predict_frame("tet")
+predict_image_save_annot("practice_data/apples.jpeg", model='yolov8s.pt', yolo_draw=True)
