@@ -1,7 +1,9 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
 from obj_predictor.data_processing.smooth import txt_to_dict
-
+from ultralytics import YOLO
+import cv2
+import smooth
 '''
 
 need to make functions that can draw bounding boxes, 
@@ -116,9 +118,9 @@ def draw_bounding_boxes(input_file, output_dir=''):
 
 
 
-def draw_single_frame(frame, labels, drawn_frame):
+def draw_single_frame(frame, labels_file, drawn_frame, save_drawn_frame=False):
 
-    with open(labels, 'r') as file:
+    with open(labels_file, 'r') as file:
         lines = file.readlines()
 
 
@@ -183,9 +185,51 @@ def draw_single_frame(frame, labels, drawn_frame):
         draw.text((x_min, y_min), box_text, font=font, fill="white")
 
 
-    img.save(drawn_frame)
+    if save_drawn_frame: img.save(drawn_frame)
+    return drawn_frame
 
+
+
+# draws annotations onto each frame of video
+# expects annotations to be saved as text files, one per frame
+#
+# input_vid: path to input video
+# output_vid: path/name of output video
+# predictions_dir: path to directory containing annotations
+#
+# returns: nothing
+def draw_annot_on_video(input_vid, output_vid, predictions_dir):
+    cap = cv2.VideoCapture(input_vid)
+
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    out = cv2.VideoWriter(output_vid, cv2.VideoWriter_fourcc(*'mp4v'), int(cap.get(cv2.CAP_PROP_FPS)), (width, height))
+
+    predictions_files_arr = smooth.list_files_in_directory(predictions_dir, '.txt')
+    count = 0
+
+    # Loop through the video frames
+    while cap.isOpened():
+        # Read a frame from the video
+        success, frame = cap.read()
+        if success:
+            drawn_frame = draw_single_frame(frame, predictions_files_arr[count], '')
+            out.write(drawn_frame)
+            count += 1
+        # Break the loop if the end of the video is reached
+        else:
+            break
+
+    # Release the video capture object and close the display window
+    cap.release()
+    out.release()
+    cv2.destroyAllWindows()
 
 # draw_single_frame("C:\\Users\\jacob\\Desktop\\practice\\apples.jpg", "C:\\Users\\jacob\\Desktop\\practice\\preds.txt","C:\\Users\\jacob\\Desktop\\practice\\apples_drawn.jpg" )
-draw_single_frame("practice_data/apples.jpeg", "practice_data/apples_pred.txt","practice_data/apples_hand_drawn.jpeg" )
+# draw_single_frame("practice_data/apples.jpeg", "practice_data/apples_pred.txt","practice_data/apples_hand_drawn.jpeg" )
+
+
+
+
 

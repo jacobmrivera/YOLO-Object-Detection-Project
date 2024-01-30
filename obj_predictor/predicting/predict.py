@@ -2,8 +2,10 @@ import cv2
 from ultralytics import YOLO
 import os
 from PIL import Image
+from tqdm import tqdm
 
 
+WINDOWS = False
 
 def predict_video_yolo_drawn(model_path, video_input, video_output='', confidence=0.5):
 
@@ -46,12 +48,17 @@ def predict_video_yolo_drawn(model_path, video_input, video_output='', confidenc
 
 # calls yolo on every frame, and saves predictions to txt file
 # a frames and labels folder are made, so that a video can be made from them
-def predict_vid_save_annot(model_path, video_input, output_dir='', confidence=0.5, save_frames=False):
+def predict_vid_save_annot(model_path, video_input, output_dir, confidence=0.5, save_frames=False):
 
     model = YOLO(model_path)
     cap = cv2.VideoCapture(video_input)
 
-    prefix = video_input.split('\\')[-1].split('.')[0]
+    if WINDOWS:
+        prefix = video_input.split('\\')[-1].split('.')[0]
+    else:
+        prefix = video_input.split('/')[-1].split('.')[0]
+
+    # if output_dir is None: output_dir = os.path.dirname(video_input)
     texts_output = os.path.join(output_dir, 'pred_labels')
 
     os.makedirs(output_dir, exist_ok=True)
@@ -63,6 +70,11 @@ def predict_vid_save_annot(model_path, video_input, output_dir='', confidence=0.
 
     count = 0
 
+    print("Predicting...")
+    # Initialize tqdm progress bar
+    progress_bar = tqdm(total=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
+
+
     # Loop through the video frames
     while cap.isOpened():
         # Read a frame from the video
@@ -70,7 +82,7 @@ def predict_vid_save_annot(model_path, video_input, output_dir='', confidence=0.
 
         if success:
             # Run YOLOv8 inference on the frame
-            results = model(frame, conf=confidence,)
+            results = model(frame, conf=confidence,verbose=False)
 
             predicted_bb = predictions_to_arr(results)
             # txt = "C:\\Users\\jacob\\Desktop\\practice\\preds.txt"
@@ -80,14 +92,17 @@ def predict_vid_save_annot(model_path, video_input, output_dir='', confidence=0.
 
             if save_frames:
                 # Save the frame as an image
-                img_path = os.path.join(texts_output, prefix + f"_{count}")
+                img_path = os.path.join(frames_output, prefix + f"_{count}.jpg")
                 cv2.imwrite(img_path, frame)
 
             count += 1
-
+            progress_bar.update(1)  # Update progress bar
         else:
             # Break the loop if the end of the video is reached
             break
+
+    # Close tqdm progress bar
+    progress_bar.close()
 
     # Release the video capture object and close the display window
     cap.release()
@@ -142,4 +157,4 @@ def predict_image_save_annot(img, model, confidence= 0.5, yolo_draw=False):
 
 
 # predict_frame("tet")
-predict_image_save_annot("practice_data/apples.jpeg", model='yolov8s.pt', yolo_draw=True)
+# predict_image_save_annot("practice_data/apples.jpeg", model='yolov8s.pt', yolo_draw=True)
