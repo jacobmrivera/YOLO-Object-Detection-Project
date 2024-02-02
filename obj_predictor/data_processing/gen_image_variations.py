@@ -1,17 +1,7 @@
-from PIL import Image
+from PIL import Image, ImageOps, ImageDraw, ImageFont
+import cv2
+import os
 
-# def flip_image_vertically(input_image_path, output_image_path):
-#     try:
-#         # Open the image file
-#         with Image.open(input_image_path) as img:
-#             # Flip the image vertically
-#             flipped_img = img.transpose(Image.FLIP_TOP_BOTTOM)
-            
-#             # Save the flipped image
-#             flipped_img.save(output_image_path)
-#             print(f"Flipped image saved as {output_image_path}")
-#     except IOError:
-#         print("Unable to load image")
 
 # Usage example:
 input_image = "input_image.jpg"  # Replace with your input image file path
@@ -19,13 +9,7 @@ output_image = "flipped_image.jpg"  # Replace with your desired output image fil
 # flip_image_vertically(input_image, output_image)
 
 
-
-
-
-
-from PIL import Image, ImageOps, ImageDraw, ImageFont
-import cv2
-import os
+DB = 0
 
 def flip_image_vertically(input_image_path, output_image_path):
     try:
@@ -42,7 +26,7 @@ def flip_image_vertically(input_image_path, output_image_path):
 
             # Save the flipped image
             flipped_img.save(output_image_path)
-            print(f"Flipped image saved as {output_image_path}")
+            if DB: print(f"Flipped image saved as {output_image_path}")
     except IOError:
         print("Unable to load image")
 
@@ -65,7 +49,7 @@ def mirror_image_horizontally(input_image_path, output_image_path):
 
             # Save the flipped image
             flipped_img.save(output_image_path)
-            print(f"Flipped image saved as {output_image_path}")
+            if DB: print(f"Flipped image saved as {output_image_path}")
     except IOError:
         print("Unable to load image")
 
@@ -81,11 +65,12 @@ def flip_and_mirror_image(input_image_path, output_image_path):
             
             # Save the flipped image
             mirrored_img.save(output_image_path)
-            print(f"Flipped and mirrored image saved as {output_image_path}")
+            if DB: print(f"Flipped and mirrored image saved as {output_image_path}")
     except IOError:
         print("Unable to load image")
 
-
+# DOES NOT WORK WELL.
+# rotating image works but the dimensions get wonky
 def rotate_image(input_image_path, output_image_path, angle):
     try:
         # Open the image file
@@ -95,7 +80,7 @@ def rotate_image(input_image_path, output_image_path, angle):
             
             # Save the rotated image
             rotated_img.save(output_image_path)
-            print(f"Rotated image saved as {output_image_path}")
+            if DB: print(f"Rotated image saved as {output_image_path}")
     except IOError:
         print("Unable to load image")
 
@@ -158,6 +143,7 @@ def mirror_bounding_box_y_axis(box_vals, image_width, image_height):
 
 def mirror_bounding_box_x_axis(box_vals, image_width, image_height):
     # Calculate original bounding box coordinates
+    # print(box_vals)
     left = box_vals[0] - box_vals[2] / 2
     top = box_vals[1] - box_vals[3] / 2
     right = box_vals[0] + box_vals[2] / 2
@@ -218,6 +204,10 @@ def process_text_file(input_file, output_file, width, height, direction):
     for i in range(len(lines)):
         curr_line = lines[i].rstrip('\n')
         curr_line_arr = curr_line.split(' ')
+        curr_line_arr[1:] = [float(x) for x in curr_line_arr[1:]]
+
+        if len(curr_line_arr) < 2: 
+            continue
 
         # might be a problem with indexing to avoid the obj number (first element)
         if direction == 'y':
@@ -229,6 +219,8 @@ def process_text_file(input_file, output_file, width, height, direction):
         # recreate string to write to output file
         lines[i] = f"{curr_line_arr[0]} {bb_array[0]} {bb_array[1]} {bb_array[2]} {bb_array[3]}\n"
 
+    # print(f"output txt file: {output_file}")
+
     # Create the output directory if it does not exist
     output_txt_dir = os.path.dirname(output_file)
 
@@ -236,66 +228,9 @@ def process_text_file(input_file, output_file, width, height, direction):
         os.makedirs(output_txt_dir)
 
     # Write the modified content to the output file
+    # print(f"output txt file: {output_file}")
     with open(output_file, 'w') as outfile:
         outfile.writelines(lines)
 
     return
-
-'''
-# Usage example:
-input_image = "luffy_album.png"  # Replace with your input image file path
-output_image = "luffy_album_out.png"  # Replace with your desired output image file path
-
-
-# Sample bounding box information (normalized)
-x_center = 0.25  # x-coordinate of the center
-y_center = 0.25  # y-coordinate of the center
-width = 0.3  # width of the bounding box
-height = 0.1  # height of the bounding box
-
-bounding_box = [x_center, y_center, width, height]
-
-draw_bounding_box(input_image, "luffy_album_bb.png",bounding_box, "LUFFY!!!")
-
-mirrod_bb = mirror_bounding_box_x_axis(bounding_box, 3024, 4032)
-
-
-mirror_image_horizontally(input_image, "luffy_album_flip_vertical.png")
-
-draw_bounding_box("luffy_album_flip_vertical.png", "luffy_album_flip_vertical.png",mirrod_bb, "LUFFY!!!")
-
-
-'''
-
-# # Example usage:
-# x_center = 0.5  # x-coordinate of the center
-# y_center = 0.4  # y-coordinate of the center
-# width = 0.3  # width of the bounding box
-# height = 0.2  # height of the bounding box
-# image_width = 640  # Replace with the actual width of your image
-# image_height = 480  # Replace with the actual height of your image
-
-# # Get the mirrored bounding box coordinates
-# mirrored_x_center, mirrored_y_center, mirrored_width, mirrored_height = mirror_bounding_box(
-#     x_center, y_center, width, height, image_width, image_height
-# )
-
-
-
-
-
-
-### below WORKS
-# flip_image_vertically(input_image, "luffy_album_flip_vertical.png")
-# mirror_image_horizontally(input_image, "luffy_album_mirror_horizontal.png")
-# flip_and_mirror_image(input_image, "luffy_album_flip_and_mirror.png")
-
-
-
-
-
-
-
-
-
 
