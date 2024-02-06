@@ -22,29 +22,24 @@ def main():
     parser = argparse.ArgumentParser(description="Predict objs in video")
     parser.add_argument("--model_path", required=True, help="Path to YOLO model .pt file")
     parser.add_argument("--video_input", required=True, help="Input video name and path")
-    parser.add_argument("--video_output", required=False, help="Output video name and path, if absent, input name plus _predicted will be used")
-    parser.add_argument("--width", type=int, required=False, default=1280, help="Width of predicted video")
-    parser.add_argument("--height", type=int, required=False, default=720, help="Height of predicted video")
     parser.add_argument("--confidence", type=float, required=False, default=0.5, help="Confidence threshold for predictions")
+
+    parser.add_argument("--save_annot", type=bool, required=False, default=False, help="flag to save text annotations")
+    parser.add_argument("--save_frames", type=bool, required=False, default=False, help="flag to save individual frames")
+    parser.add_argument("--save_yolo_vid", type=bool, required=False, default=True, help="flag to save predicted video")
+
 
     args = parser.parse_args()
 
     model_path = args.model_path
     video_input = args.video_input
-    video_output = args.video_output
-    width = args.width
-    height = args.height
     confidence = args.confidence
 
-    json_config_path = args.json_config_path
+    save_annot = args.save_annot
+    save_frames = args.save_frames
+    save_yolo_vid = args.save_yolo_vid
 
-    try:
-        with open(json_config_path, 'r') as config_file:
-            json_config = json.load(config_file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        print("Error reading config file.")
-
-    predict.predict_video(model_path, video_input, video_output, width, height, confidence)
+    predict.predict_video(model_path, video_input, confidence, save_annot, save_frames, save_yolo_vid)
 
     return
 

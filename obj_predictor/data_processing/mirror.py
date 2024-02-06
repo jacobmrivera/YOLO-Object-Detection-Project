@@ -4,12 +4,6 @@ import cv2
 import os
 
 
-# Usage example:
-input_image = "input_image.jpg"  # Replace with your input image file path
-output_image = "flipped_image.jpg"  # Replace with your desired output image file path
-# flip_image_vertically(input_image, output_image)
-
-
 DB = 0
 
 def flip_image_vertically(input_image_path, output_image_path):

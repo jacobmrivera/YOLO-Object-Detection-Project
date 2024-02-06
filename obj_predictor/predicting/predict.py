@@ -5,112 +5,6 @@ from PIL import Image
 from tqdm import tqdm
 
 
-WINDOWS = False
-
-def predict_video_yolo_drawn(model_path, video_input, video_output='', confidence=0.5):
-
-    model = YOLO(model_path)
-    cap = cv2.VideoCapture(video_input)
-
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
-    out = cv2.VideoWriter(video_output, cv2.VideoWriter_fourcc(*'mp4v'), int(cap.get(cv2.CAP_PROP_FPS)), (width, height))
-
-    # Loop through the video frames
-    while cap.isOpened():
-        # Read a frame from the video
-        success, frame = cap.read()
-
-        if success:
-            # Run YOLOv8 inference on the frame
-            results = model(frame, conf=confidence,)
-
-            # Visualize the results on the frame
-            annotated_frame = results[0].plot()
-
-            # write frame to videoWriter
-            out.write(annotated_frame)
-        else:
-            # Break the loop if the end of the video is reached
-            break
-
-    # Release the video capture object and close the display window
-    cap.release()
-    out.release()
-    cv2.destroyAllWindows()
-
-    return
-
-
-
-# def write_annot_to_text():
-
-# calls yolo on every frame, and saves predictions to txt file
-# a frames and labels folder are made, so that a video can be made from them
-def predict_vid_save_annot(model_path, video_input, output_dir, confidence=0.5, save_frames=False):
-
-    model = YOLO(model_path)
-    cap = cv2.VideoCapture(video_input)
-
-    if WINDOWS:
-        prefix = video_input.split('\\')[-1].split('.')[0]
-    else:
-        prefix = video_input.split('/')[-1].split('.')[0]
-
-    # if output_dir is None: output_dir = os.path.dirname(video_input)
-    texts_output = os.path.join(output_dir, 'pred_labels')
-
-    os.makedirs(output_dir, exist_ok=True)
-    os.makedirs(texts_output, exist_ok=True)
-
-    if save_frames:
-        frames_output = os.path.join(output_dir, 'frames')
-        os.makedirs(frames_output, exist_ok=True)
-
-    count = 0
-
-    print("Predicting...")
-    # Initialize tqdm progress bar
-    progress_bar = tqdm(total=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
-
-
-    # Loop through the video frames
-    while cap.isOpened():
-        # Read a frame from the video
-        success, frame = cap.read()
-
-        if success:
-            # Run YOLOv8 inference on the frame
-            results = model(frame, conf=confidence,verbose=False)
-
-            predicted_bb = predictions_to_arr(results)
-            # txt = "C:\\Users\\jacob\\Desktop\\practice\\preds.txt"
-
-            txt_path = os.path.join(texts_output, prefix + f"_{count}")
-            predicts_to_txt(predicted_bb, txt_path)
-
-            if save_frames:
-                # Save the frame as an image
-                img_path = os.path.join(frames_output, prefix + f"_{count}.jpg")
-                cv2.imwrite(img_path, frame)
-
-            count += 1
-            progress_bar.update(1)  # Update progress bar
-        else:
-            # Break the loop if the end of the video is reached
-            break
-
-    # Close tqdm progress bar
-    progress_bar.close()
-
-    # Release the video capture object and close the display window
-    cap.release()
-    cv2.destroyAllWindows()
-
-    return
-
-
 
 def predictions_to_arr(results):
     predicted_bb = []
@@ -130,17 +24,16 @@ def predicts_to_txt(preds, output_file):
 
 
 
-def predict_image_save_annot(img, model, confidence= 0.5, yolo_draw=False):
+def predict_image_save_annot(img, model, confidence= 0.5, save_yolo_img=False):
 
     model = YOLO(model)
-
     results = model(img, conf=confidence)
 
-     # Visualize the results on the frame
+    # Visualize the results on the frame
     annotated_frame = results[0].plot()
 
     # Save the frame as an image
-    if yolo_draw:
+    if save_yolo_img:
         out_img = img.split('.')[0] + "_pred.jpg"
         cv2.imwrite(out_img, annotated_frame)
 
@@ -156,5 +49,77 @@ def predict_image_save_annot(img, model, confidence= 0.5, yolo_draw=False):
     predicts_to_txt(predicted_bb, text_name)
 
 
-# predict_frame("tet")
-# predict_image_save_annot("practice_data/apples.jpeg", model='yolov8s.pt', yolo_draw=True)
+def predict_video(model_path, input_vid, conf=0.5, save_annot=False, save_frames=False, save_yolo_vid=True):
+    model = YOLO(model_path)
+    cap = cv2.VideoCapture(input_vid)
+
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    video_pre_path, video_name = os.path.split(input_vid)
+    vid_prefix = video_name.split('.')[0]
+
+    output_path =  os.path.join(video_pre_path, vid_prefix+"_predicted_data")
+    os.makedirs(output_path, exist_ok=True)
+
+    if save_yolo_vid:
+        output_vid = os.path.join(output_path, "predicted.mp4")
+        out = cv2.VideoWriter(output_vid, cv2.VideoWriter_fourcc(*'mp4v'), int(cap.get(cv2.CAP_PROP_FPS)), (width, height))
+
+    if save_frames:
+        frames_output = os.path.join(output_path, 'frames')
+        os.makedirs(frames_output, exist_ok=True)
+
+    if save_annot:
+        texts_output = os.path.join(output_path, 'pred_labels')
+        os.makedirs(texts_output, exist_ok=True)
+
+    count = 0
+
+    print("Predicting...")
+    # Initialize tqdm progress bar
+    progress_bar = tqdm(total=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
+
+    # Loop through the video frames
+    while cap.isOpened():
+        # Read a frame from the video
+        success, frame = cap.read()
+
+        if success:
+            # Run YOLOv8 inference on the frame
+            results = model(frame, conf=conf,verbose=False)
+
+            if save_annot:
+                predicted_bb = predictions_to_arr(results)
+                txt_path = os.path.join(texts_output, vid_prefix + f"_{count}.txt")
+                predicts_to_txt(predicted_bb, txt_path)
+
+            if save_frames:
+                # Save the frame as an image
+                img_path = os.path.join(frames_output, vid_prefix + f"_{count}.jpg")
+                cv2.imwrite(img_path, frame)
+
+            if save_yolo_vid:
+                results = model(frame, conf=conf, verbose=False)
+
+                # Visualize the results on the frame
+                annotated_frame = results[0].plot()
+
+                # write frame to videoWriter
+                out.write(annotated_frame)
+
+            count += 1
+            progress_bar.update(1)  # Update progress bar
+        else:
+            # Break the loop if the end of the video is reached
+            break
+
+    # Close tqdm progress bar
+    progress_bar.close()
+
+    # Release the video capture object and close the display window
+    cap.release()
+    if save_yolo_vid: out.release()
+    cv2.destroyAllWindows()
+
+    return

@@ -2,7 +2,7 @@
 
 import json
 import argparse
-import obj_predictor.data_processing.gen_image_variations as gen_img_vars
+import obj_predictor.data_processing.mirror as gen_img_vars
 
 '''
 Created by Jacob Rivera
