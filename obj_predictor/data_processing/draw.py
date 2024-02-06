@@ -1,9 +1,8 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
-from obj_predictor.data_processing.smooth import txt_to_dict
+import obj_predictor.data_processing.smooth as smooth
 from ultralytics import YOLO
 import cv2
-import smooth
 '''
 
 need to make functions that can draw bounding boxes, 
@@ -123,7 +122,8 @@ def draw_single_frame(frame, labels_file, drawn_frame, save_drawn_frame=False):
     with open(labels_file, 'r') as file:
         lines = file.readlines()
 
-
+    # print(labels_file)
+    # print(lines)
     # RGB: (236, 3, 252)
     # Draw text with outline
     # text_color = 'black'
@@ -160,16 +160,25 @@ def draw_single_frame(frame, labels_file, drawn_frame, save_drawn_frame=False):
         # Get image width and height
 
         # Convert bounding box coordinates to YOLO format
-        x_center = bbox_info[0] #* img_width
-        y_center = bbox_info[1] #* img_height
-        box_width = bbox_info[2] #* img_width
-        box_height = bbox_info[3] #* img_height
-
+        x_center = bbox_info[0] * img_width
+        y_center = bbox_info[1] * img_height
+        box_width = bbox_info[2] * img_width
+        box_height = bbox_info[3] * img_height
+        # print(f"Y_CETNER: {y_center}")
         # Calculate box coordinates
         x_min = x_center - (box_width / 2)
         y_min = y_center - (box_height / 2)
         x_max = x_center + (box_width / 2)
         y_max = y_center + (box_height / 2)
+
+        if (y_min > y_max):
+            temp = y_min
+            y_min = y_max
+            y_min = temp
+        if (x_min > x_max):
+            temp = x_min
+            x_min = x_max
+            x_min = temp
 
         color = rgb_dict[obj_num] if obj_num in rgb_dict else 'rgb(236, 3, 252)'
 
@@ -177,12 +186,12 @@ def draw_single_frame(frame, labels_file, drawn_frame, save_drawn_frame=False):
         # text_bbox = draw.textbbox((0, 0), box_text, font)
 
         # Draw bounding box
-        draw.rectangle([x_min, y_min + font_size, x_max, y_max], outline=color, width=line_width)
+        draw.rectangle([x_min, y_min, x_max, y_max], outline=color, width=line_width)
 
         # Draw text
-        left, top, right, bottom = draw.textbbox((x_min, y_min - 15), box_text, font=font)
-        draw.rectangle((left, top, right+line_width, bottom+line_width), fill=color)
-        draw.text((x_min, y_min), box_text, font=font, fill="white")
+        left, top, right, bottom = draw.textbbox((x_min, y_min - font_size), box_text, font=font)
+        draw.rectangle((left, top-line_width, right+line_width, bottom), fill=color)
+        draw.text((x_min, y_min-font_size), box_text, font=font, fill="white")
 
 
     if save_drawn_frame: img.save(drawn_frame)
