@@ -28,15 +28,15 @@ def main():
 
     args = parser.parse_args()
 
-    # model_path = args.model_path
-    # video_input = args.video_input
-    # annot_output = args.annot_output
-    # confidence = args.confidence
-    # save_frames = args.save_frames
+    model_path = args.model_path
+    video_input = args.video_input
+    annot_output = args.annot_output
+    confidence = args.confidence
+    save_frames = args.save_frames
 
 
-    # predict.predict_vid_save_annot(model_path, video_input, annot_output, confidence, save_frames)
-    predict.predict_video("Mirrored_Images_Training\\all_image_variants\\weights\\best.pt", "C:\\Users\\multimaster\\Desktop\\YOLO-DATASETS\\videos\\exp351_sub2_child\\short.mp4", video_output='', width=1280, height=720, confidence=0.5)
+    predict.predict_vid_save_annot(model_path, video_input, annot_output, confidence, save_frames)
+    # predict.predict_video("Mirrored_Images_Training\\all_image_variants\\weights\\best.pt", "C:\\Users\\multimaster\\Desktop\\YOLO-DATASETS\\videos\\exp351_sub2_child\\short.mp4", video_output='', width=1280, height=720, confidence=0.5)
 
 
     return
