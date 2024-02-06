@@ -17,16 +17,14 @@ import obj_predictor as op
 
 '''
 Created by Jacob Rivera
-Fall 2023
+Spring 2024
 
-Last edit: 01/03/2024
+Last edit: 02/02/2024
 
 Description:
-    Train YOLO model from json config file details. To run, ensure that the json
-    file passed in has all important fields filled out.
+    Train YOLO model from passed aruements
 
-    TODO: make a list explaining what fields are important and what they do
-
+    TODO: Make it so that the yaml is made automatically, and checks for train/test split and does it if it isn't
 '''
 
 
@@ -34,25 +32,26 @@ Description:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Train YOLO model from json config file details")
-    parser.add_argument("--json_config_path", required=True, help="Path to json config file")
+    parser = argparse.ArgumentParser(description="Train YOLO model from passed arguements")
+    # parser.add_argument("--data_dir", required=True, help="Path data to be used for training")
+    parser.add_argument("--model", required=False, default="yolov8s.pt", help="model to train with")
+    parser.add_argument("--epochs", required=False, type=int, default=1000, help="max number of epochs to train")
+    parser.add_argument("--device", required=True, help="int for GPU device")
+    parser.add_argument("--yaml_path", required=True, help="Path data yaml used by YOLO. Defines obj nums and train/test path")
+    parser.add_argument("--project_name", required=True, help="String for project containing training sessions")
+    parser.add_argument("--run_name", required=True, help="String for current training session")
+    
     args = parser.parse_args()
 
-    json_config_path = args.json_config_path
+    model = args.model
+    epochs = args.epochs
+    device = args.device
+    yaml_path = args.yaml_path
+    project_name = args.project_name
+    run_name = args.run_name
 
-    try:
-        with open(json_config_path, 'r') as config_file:
-            json_config = json.load(config_file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        print("Error reading config file.")
 
-    op.data_processing.make_config.make_config(json_config)
-
-    op.data_processing.split_data_pipe(source_dir=json_config['dataset_folder'], output_dir=json_config['dataset_folder'], split=json_config['split'], seed=json_config['constants']['SEED'])
-
-    # # predicting_videos.predict_vid_from_json(json_config)
-    op.training.train_model_json(json_config)
-    # trainer.train_model(json_config)
+    op.training.train_model(model, device, yaml_path, project_name, run_name, epochs)
 
     return
 

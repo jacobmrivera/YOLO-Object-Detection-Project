@@ -1,5 +1,4 @@
 from .blur import *
-from .draw_boxes_single_obj import *
 from .frame_extractor import *
 # from .gather_obj_data import *
 from .gen_image_variations import *

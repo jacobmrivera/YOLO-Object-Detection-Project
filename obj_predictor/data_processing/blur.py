@@ -1,7 +1,6 @@
 import cv2
 import os
 
-from tqdm import tqdm
 
 
 
@@ -42,7 +41,7 @@ def batch_gen_blur_levels(input_dir, output_dir, threshold):
     blurry_count = 0
 
     with open(out_path, 'w') as file:
-        for image in tqdm(file_name_list, desc="Processing images"):
+        for image in file_name_list:
             # if not an image, skip
             if image[-4:] != ".jpg": continue
 

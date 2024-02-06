@@ -1,4 +1,5 @@
 from PIL import Image, ImageOps, ImageDraw, ImageFont
+import PIL
 import cv2
 import os
 
@@ -59,12 +60,14 @@ def flip_and_mirror_image(input_image_path, output_image_path):
         # Open the image file
         with Image.open(input_image_path) as img:
             # Flip the image horizontally using mirror
-            flipped_img = ImageOps.flip(img)
+            # flipped_img = ImageOps.flip(img)
+            out = img.transpose(PIL.Image.FLIP_LEFT_RIGHT)
+            out = out.transpose(PIL.Image.FLIP_TOP_BOTTOM)
 
-            mirrored_img = ImageOps.mirror(flipped_img)
+            # mirrored_img = ImageOps.mirror(flipped_img)
             
             # Save the flipped image
-            mirrored_img.save(output_image_path)
+            out.save(output_image_path)
             if DB: print(f"Flipped and mirrored image saved as {output_image_path}")
     except IOError:
         print("Unable to load image")
@@ -138,12 +141,12 @@ def mirror_bounding_box_y_axis(box_vals, image_width, image_height):
     mirrored_height = mirrored_bottom - mirrored_top
 
     # Return the mirrored bounding box coordinates in YOLO format
-    return [box_vals[0], mirrored_center_y, box_vals[2], mirrored_height]
+    # return [box_vals[0], mirrored_center_y, box_vals[2], mirrored_height]
+    return [1-box_vals[0], box_vals[1], box_vals[2], box_vals[3]]
 
 
 def mirror_bounding_box_x_axis(box_vals, image_width, image_height):
     # Calculate original bounding box coordinates
-    # print(box_vals)
     left = box_vals[0] - box_vals[2] / 2
     top = box_vals[1] - box_vals[3] / 2
     right = box_vals[0] + box_vals[2] / 2
@@ -158,7 +161,8 @@ def mirror_bounding_box_x_axis(box_vals, image_width, image_height):
     mirrored_width = mirrored_right - mirrored_left
 
     # Return the mirrored bounding box coordinates
-    return [mirrored_x_center, box_vals[1], mirrored_width, box_vals[3]]
+    # return [mirrored_x_center, box_vals[1], mirrored_width, box_vals[3]]
+    return [box_vals[0], 1 - box_vals[1], box_vals[2], box_vals[3]]
 
 
 def mirror_bounding_box_xy(box_vals, image_width, image_height):
@@ -183,7 +187,8 @@ def mirror_bounding_box_xy(box_vals, image_width, image_height):
     mirrored_height = mirrored_bottom - mirrored_top
 
     # Return the mirrored bounding box coordinates
-    return [mirrored_x_center, mirrored_y_center, mirrored_width, mirrored_height]
+    # return [mirrored_x_center, mirrored_y_center, mirrored_width, mirrored_height]
+    return [1 - box_vals[0], 1 - box_vals[1], box_vals[2], box_vals[3]]
 
 
 

@@ -7,7 +7,9 @@ import obj_predictor.data_processing.smooth as smooth
 import os
 from tqdm import tqdm
 
-
+##########
+# NEED TO MAKE IT SO THE ORIG AND VARS ARE ALL TOGETHER IN ONE DIR
+#####
 
 
 '''
@@ -43,26 +45,33 @@ def main():
 
     if output_dir is None:
         output_dir = 'data_vars'
-        output_dir_path = os.path.join(get_parent_directory(images_dir), output_dir)
-        os.makedirs(output_dir_path, exist_ok=True)
+        output_dir = os.path.join(get_parent_directory(images_dir), output_dir)
+        # print(f"output_dir_path, {output_dir}")
+        os.makedirs(output_dir, exist_ok=True)
     else:
         os.makedirs(output_dir, exist_ok=True)
 
-
+    # print(output_dir)
     # create paths and vars for the child output directories
     output_images = os.path.join(output_dir, 'images')
     os.makedirs(output_images, exist_ok=True)
     output_labels = os.path.join(output_dir, 'labels')
     os.makedirs(output_labels, exist_ok=True)
 
+    # print(f"output_images: {output_images}")
+    # print(f"output_labels: {output_labels}")
+    # print()
 
-    images = smooth.list_files_in_directory(images_dir)
+
+    images = smooth.list_files_in_directory(images_dir, '.jpg')
 
     for img in tqdm(images, desc="Processing images"):
+        # print(img)
+        img = os.path.join(images_dir, img)
         width, height = gen_img_vars.get_image_resolution(img)
 
         img_name = img.split('\\')[-1]
-        text_name = img.split('\\')[-1].replace('.txt', '.jpg')
+        text_name = img.split('\\')[-1].replace('.jpg', '.txt')
 
 
         lbl = os.path.join(labels_dir, text_name)
@@ -75,10 +84,18 @@ def main():
         img_name_out = img_name.replace(".jpg", "_mirror_acr_x.jpg")
         output_img = os.path.join(output_images, img_name_out)
 
-        lbl_name_out = lbl.replace(".txt", "_mirror_acr_x.txt")
+        lbl_name_out = text_name.replace(".txt", "_mirror_acr_x.txt")
         output_lbl = os.path.join(output_labels, lbl_name_out)
 
+        # print(f"img_name_out: {img_name_out}")
+        # print(f"output_img: {output_img}")
+        # print(f"lbl_name_out: {lbl_name_out}")
+        # print(f"output_lbl: {output_lbl}")
 
+        # input()
+        # print(lbl)
+        # print(output_lbl)
+        # input()
         gen_img_vars.flip_image_vertically(img, output_img)
         gen_img_vars.process_text_file(lbl, output_lbl, width, height, 'x')
 
@@ -87,7 +104,7 @@ def main():
         img_name_out = img_name.replace(".jpg", "_mirror_acr_y.jpg")
         output_img = os.path.join(output_images, img_name_out)
         
-        lbl_name_out = lbl.replace(".txt", "_mirror_acr_y.txt")
+        lbl_name_out = text_name.replace(".txt", "_mirror_acr_y.txt")
         output_lbl = os.path.join(output_labels, lbl_name_out)
 
 
@@ -99,10 +116,10 @@ def main():
         img_name_out = img_name.replace(".jpg", "_mirror_acr_xy.jpg")
         output_img = os.path.join(output_images, img_name_out)
         
-        lbl_name_out = lbl.replace(".txt", "_mirror_acr_xy.txt")
+        lbl_name_out = text_name.replace(".txt", "_mirror_acr_xy.txt")
         output_lbl = os.path.join(output_labels, lbl_name_out)
 
-        gen_img_vars.flip_image_vertically(img, output_img)
+        gen_img_vars.flip_and_mirror_image(img, output_img)
         gen_img_vars.process_text_file(lbl, output_lbl, width, height, 'xy')
 
 
