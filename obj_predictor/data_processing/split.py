@@ -62,3 +62,44 @@ def split_data_pipe(source_dir, output_dir, split, seed):
     copy_test_data(source_text_dir, source_image_dir, out_test_text_dir, out_test_image_dir, file_names, split_point)
 
     return 1
+
+
+
+def kfold_data(source_dir, output_dir, k, split, seed):
+    random.seed(seed)
+
+    # Set the source directories
+    source_text_dir = source_dir + "\\labels"
+    source_image_dir = source_dir + "\\images"
+
+    # Get a list of file names in the text folder (assuming the names match the image files)
+    file_names = os.listdir(source_text_dir)
+
+
+    # Randomly shuffle the file names using the seeded random function
+    random.shuffle(file_names)
+
+    # Calculate the split point based on an split/1-split ratio ex: 80/20
+    fold_size = len(file_names)// k
+
+    # Calculate the split point based on an split/1-split ratio ex: 80/20
+    split_point = int(split * len(file_names))
+
+    subset_files = [file_names[i*fold_size:(i+1)*fold_size] for i in range(k)]
+
+    for i in range(1, k+1):
+
+
+        # Set the destination directories
+        out_train_text_dir = output_dir + f"\\{i}\\train\\labels"
+        out_train_image_dir = output_dir + f"\\{i}\\train\\images"
+        out_test_text_dir =  output_dir + f"\\{i}\\test\\labels"
+        out_test_image_dir = output_dir + f"\\{i}\\test\\images"
+
+        os.makedirs(out_train_text_dir, exist_ok=True)
+        os.makedirs(out_train_image_dir, exist_ok=True)
+        os.makedirs(out_test_text_dir, exist_ok=True)
+        os.makedirs(out_test_image_dir, exist_ok=True)
+
+        copy_train_data(source_text_dir, source_image_dir, out_train_text_dir, out_train_image_dir, subset_files[i], split_point)
+        copy_test_data(source_text_dir, source_image_dir, out_test_text_dir, out_test_image_dir, subset_files[i], split_point)

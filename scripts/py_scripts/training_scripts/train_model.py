@@ -50,7 +50,7 @@ def main():
     project_name = args.project_name
     run_name = args.run_name
 
-
+    
     op.training.train_model(model, device, yaml_path, project_name, run_name, epochs)
 
     return
