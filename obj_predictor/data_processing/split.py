@@ -65,7 +65,8 @@ def split_data_pipe(source_dir, output_dir, split, seed):
 
 
 
-def kfold_data(source_dir, output_dir, k, split, seed):
+# splits data into multiple folds for cross validation training
+def kfold_data(source_dir, output_dir, k, seed):
     random.seed(seed)
 
     # Set the source directories
@@ -75,31 +76,52 @@ def kfold_data(source_dir, output_dir, k, split, seed):
     # Get a list of file names in the text folder (assuming the names match the image files)
     file_names = os.listdir(source_text_dir)
 
-
     # Randomly shuffle the file names using the seeded random function
     random.shuffle(file_names)
 
     # Calculate the split point based on an split/1-split ratio ex: 80/20
-    fold_size = len(file_names)// k
+    fold_size = len(file_names) // k
 
-    # Calculate the split point based on an split/1-split ratio ex: 80/20
-    split_point = int(split * len(file_names))
+    subset_files = []
+    for i in range(k):
+        if i == k-1:
+            subset = file_names[i * fold_size :]
+        else:
+            subset = file_names[i * fold_size : (i + 1) * fold_size]
+        subset_files.append(subset)
 
-    subset_files = [file_names[i*fold_size:(i+1)*fold_size] for i in range(k)]
+    for i in range(k):
 
-    for i in range(1, k+1):
+        training_files  = subset_files[:i] + subset_files[i+1:] # get all files except fold
+        training_files = [element for sublist in training_files for element in sublist] # collapse 2d array into 1d
 
+        testing_files = subset_files[i]
 
         # Set the destination directories
-        out_train_text_dir = output_dir + f"\\{i}\\train\\labels"
-        out_train_image_dir = output_dir + f"\\{i}\\train\\images"
-        out_test_text_dir =  output_dir + f"\\{i}\\test\\labels"
-        out_test_image_dir = output_dir + f"\\{i}\\test\\images"
+        out_train_text_dir = output_dir + f"\\{i+1}\\train\\labels"
+        out_train_image_dir = output_dir + f"\\{i+1}\\train\\images"
+        out_test_text_dir =  output_dir + f"\\{i+1}\\test\\labels"
+        out_test_image_dir = output_dir + f"\\{i+1}\\test\\images"
 
         os.makedirs(out_train_text_dir, exist_ok=True)
         os.makedirs(out_train_image_dir, exist_ok=True)
         os.makedirs(out_test_text_dir, exist_ok=True)
         os.makedirs(out_test_image_dir, exist_ok=True)
 
-        copy_train_data(source_text_dir, source_image_dir, out_train_text_dir, out_train_image_dir, subset_files[i], split_point)
-        copy_test_data(source_text_dir, source_image_dir, out_test_text_dir, out_test_image_dir, subset_files[i], split_point)
+        for file_name in training_files:
+                try:
+                    shutil.copy2(os.path.join(source_text_dir, file_name), os.path.join(out_train_text_dir, file_name))
+                    shutil.copy2(os.path.join(source_image_dir, file_name[:-4]+".jpg"), os.path.join(out_train_image_dir, file_name[:-4]+".jpg"))
+                except:
+                    print("Could not copy files: " + file_name)
+                    continue
+        
+        for file_name in testing_files:
+            try:
+                shutil.copy2(os.path.join(source_text_dir, file_name), os.path.join(out_test_text_dir, file_name))
+                shutil.copy2(os.path.join(source_image_dir, file_name[:-4]+".jpg"), os.path.join(out_test_image_dir, file_name[:-4]+".jpg"))
+            except:
+                print("Could not copy files: " + file_name)
+                continue
+
+       
