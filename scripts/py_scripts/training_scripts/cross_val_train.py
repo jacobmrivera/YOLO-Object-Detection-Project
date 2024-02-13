@@ -2,7 +2,7 @@
 
 import json
 import argparse
-
+import os
 import sys
 sys.path.append('..obj_predictor')
 
@@ -28,7 +28,35 @@ Description:
     TODO: Make it so that the yaml is made automatically, and checks for train/test split and does it if it isn't
 '''
 
-
+obj_dict = {
+    "0": "kettle",
+    "1": "cat",
+    "2": "potato",
+    "3": "firetruck",
+    "4": "bulldozer",
+    "5": "car",
+    "6": "ostrich",
+    "7": "frog",
+    "8": "truck",
+    "9": "lobster",
+    "10": "carrot",
+    "11": "colander",
+    "12": "motorcycle",
+    "13": "cup",
+    "14": "dog",
+    "15": "elephant",
+    "16": "spaceship",
+    "17": "pineapple",
+    "18": "banana",
+    "19": "submarine",
+    "20": "boat",
+    "21": "cookie",
+    "22": "stingray",
+    "23": "fork",
+    "24": "helicopter",
+    "25": "duck",
+    "26": "bee"
+}
 
 
 
@@ -41,7 +69,7 @@ def main():
     # parser.add_argument("--yaml_path", required=True, help="Path data yaml used by YOLO. Defines obj nums and train/test path")
     # parser.add_argument("--project_name", required=True, help="String for project containing training sessions")
     # parser.add_argument("--run_name", required=True, help="String for current training session")
-    
+
     # args = parser.parse_args()
 
     # model = args.model
@@ -55,18 +83,23 @@ def main():
     model = "yolov8s.pt"
     epochs = 1000
     device = 0
-    yaml_path = "data\\config_files\\s_mirrored_vars.yaml"
-    project_name = "Mirrored_Images_Training"
-    run_name = "all_image_variants"
+    project_name = "K_fold_cross_Training"
+    run_name = "fold_"
     data_src = "top_level_dir"
 
-    op.data_processing.util.make_config(out_name, dataset_path, obj_num, obj_dict, json_config)
-    op.training.train_model(model, device, yaml_path, project_name, run_name, epochs)
+    k = 5
+    obj_num = 26
 
-    kf = KFold(n_splits=2)
 
-    for i, (train_index, test_index) in enumerate(kf.split(X)):
-        print()
+    op.data_processing.split.kfold_data(data_src, data_src, 5, 0.8, 42)
+
+    for i in range (1, k+1):
+        yaml_out_name = f"config_{i}.json"
+        dataset_path = os.path.join(data_src, i)
+        op.data_processing.util.make_config(yaml_out_name, dataset_path, obj_num, obj_dict)
+
+        model = os.path.join(project_name, run_name+str(i-1), "weights", "best.pt") if i > 1 else "yolov8s.pt"
+        op.training.train_model(model, device, yaml_out_name, project_name, run_name+str(i), epochs)
 
     return
 

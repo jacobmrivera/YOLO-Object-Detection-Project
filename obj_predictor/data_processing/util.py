@@ -82,7 +82,7 @@ def make_config_json(json_config):
 
 
 
-def make_config(out_name, dataset_path, obj_num, obj_dict, json_config):
+def make_config(out_name, dataset_path, obj_num, obj_dict):
     # out_name = json_config["training"]["data"]
     # dataset_path = json_config["dataset_folder"]
 
