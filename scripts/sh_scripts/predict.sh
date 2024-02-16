@@ -6,18 +6,18 @@
 
 
 # Define the paths
-model_path="Mirrored_Images_Training\\all_image_variants\\weights\\best.pt"
-video_input="G:\\jacob\\practice_data_yolo\\short.mp4"
+model_path="All_Data_Trainings\\all_data_2_14_mirrored\\weights\\best.pt"
+video_input="C:\\Users\\multimaster\\Desktop\\dynamic_vids_to_predict\\20230209_10057_cam07.mp4"
 confidence=0.5  # Default is 50, 0 == really blurry, 200 == really sharp
 
 save_frames=True
-save_annot=True
+save_annot=False
 save_yolo_vid=True
-
+save_drawn_frames=True
 
 source venv\\Scripts\\activate
 
 # Run the Python script
-python scripts\\py_scripts\\predicting_scripts\\predict_video.py --model_path "$model_path" --video_input "$video_input" --confidence "$confidence" --save_frames "$save_frames" --save_annot "$save_annot" --save_yolo_vid "$save_yolo_vid"
+python scripts\\py_scripts\\predicting_scripts\\predict_video.py --model_path "$model_path" --video_input "$video_input" --confidence "$confidence" --save_frames "$save_frames" --save_annot "$save_annot" --save_yolo_vid "$save_yolo_vid" --save_drawn_frames "$save_drawn_frames"
 
 deactivate

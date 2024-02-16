@@ -27,6 +27,7 @@ def main():
     parser.add_argument("--save_annot", type=bool, required=False, default=False, help="flag to save text annotations")
     parser.add_argument("--save_frames", type=bool, required=False, default=False, help="flag to save individual frames")
     parser.add_argument("--save_yolo_vid", type=bool, required=False, default=True, help="flag to save predicted video")
+    parser.add_argument("--save_drawn_frames", type=bool, required=False, default=False, help="flag to save yolo drawn/annotated frames")
 
 
     args = parser.parse_args()
@@ -35,11 +36,15 @@ def main():
     video_input = args.video_input
     confidence = args.confidence
 
+    # add flag for normalized annot
     save_annot = args.save_annot
     save_frames = args.save_frames
     save_yolo_vid = args.save_yolo_vid
+    save_drawn_frames = args.save_drawn_frames
+    
+    print(f"save_annot: {save_annot}, {type(save_annot)}")
 
-    predict.predict_video(model_path, video_input, confidence, save_annot, save_frames, save_yolo_vid)
+    predict.predict_video(model_path, video_input, confidence, save_annot, save_frames, save_yolo_vid, save_drawn_frames)
 
     return
 

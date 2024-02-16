@@ -29,33 +29,33 @@ Description:
 '''
 
 obj_dict = {
-    "0": "kettle",
-    "1": "cat",
-    "2": "potato",
-    "3": "firetruck",
-    "4": "bulldozer",
-    "5": "car",
-    "6": "ostrich",
-    "7": "frog",
-    "8": "truck",
-    "9": "lobster",
-    "10": "carrot",
-    "11": "colander",
-    "12": "motorcycle",
-    "13": "cup",
-    "14": "dog",
-    "15": "elephant",
-    "16": "spaceship",
-    "17": "pineapple",
-    "18": "banana",
-    "19": "submarine",
-    "20": "boat",
-    "21": "cookie",
-    "22": "stingray",
-    "23": "fork",
-    "24": "helicopter",
-    "25": "duck",
-    "26": "bee"
+    0: "kettle",
+    1: "cat",
+    2: "potato",
+    3: "firetruck",
+    4: "bulldozer",
+    5: "car",
+    6: "ostrich",
+    7: "frog",
+    8: "truck",
+    9: "lobster",
+    10: "carrot",
+    11: "colander",
+    12: "motorcycle",
+    13: "cup",
+    14: "dog",
+    15: "elephant",
+    16: "spaceship",
+    17: "pineapple",
+    18: "banana",
+    19: "submarine",
+    20: "boat",
+    21: "cookie",
+    22: "stingray",
+    23: "fork",
+    24: "helicopter",
+    25: "duck",
+    26: "bee"
 }
 
 
@@ -81,26 +81,44 @@ def main():
 
 
     model = "yolov8s.pt"
-    epochs = 1000
+    epochs = 2000
     device = 0
-    project_name = "K_fold_cross_Training"
-    run_name = "fold_"
-    data_src = "top_level_dir"
+    project_name = "All_Data_Trainings"
+    run_name = "all_data_2_14_mirrored_80_20_split"
+    data_src = "C:\\Users\\multimaster\\Desktop\\data_to_train_on\\all_annotations_2_14_24_with_mirrored"
 
     k = 5
-    obj_num = 26
+    split = 0.8
+    seed = 42
+    obj_num = 27
 
 
-    op.data_processing.split.kfold_data(data_src, data_src, 5, 0.8, 42)
+    yaml_out_name = "config_all.yaml"
+    dataset_path = data_src # os.path.join(data_src, str(5))
 
-    for i in range (1, k+1):
-        yaml_out_name = f"config_{i}.json"
-        dataset_path = os.path.join(data_src, i)
-        op.data_processing.util.make_config(yaml_out_name, dataset_path, obj_num, obj_dict)
+    op.data_processing.split.split_data_pipe(dataset_path, dataset_path, split, seed)
+    op.data_processing.util.make_config(yaml_out_name, dataset_path, obj_num, obj_dict)
+    model = "yolov8s.pt" #os.path.join(project_name, run_name+"all", "weights", "best.pt") 
+    op.training.train_model(model, device, yaml_out_name, project_name, run_name, epochs)
 
-        model = os.path.join(project_name, run_name+str(i-1), "weights", "best.pt") if i > 1 else "yolov8s.pt"
-        op.training.train_model(model, device, yaml_out_name, project_name, run_name+str(i), epochs)
+    
+    # op.data_processing.split.kfold_data(data_src, data_src, k, seed)
 
+    # for i in range (1, k+1):
+    #     yaml_out_name = f"config_{i}.yaml"
+    #     dataset_path = os.path.join(data_src, str(i))
+    #     op.data_processing.util.make_config(yaml_out_name, dataset_path, obj_num, obj_dict)
+
+    #     # get previous best model or standard s model to start
+    #     model = os.path.join(project_name, run_name+str(i-1), "weights", "best.pt") if i > 1 else "yolov8s.pt"
+    #     op.training.train_model(model, device, yaml_out_name, project_name, run_name+str(i), epochs)
+
+    #     # Check if the file exists before attempting to delete it
+    #     if os.path.exists(yaml_out_name):
+    #         os.remove(yaml_out_name)
+    #         print(f"{yaml_out_name} deleted successfully.")
+    #     else:
+    #         print(f"Could not delete {yaml_out_name}.")
     return
 
 
