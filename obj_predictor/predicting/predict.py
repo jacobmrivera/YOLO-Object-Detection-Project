@@ -84,8 +84,8 @@ def predict_video(model_path, input_vid, output_dir, conf=0.5, save_annot=False,
 
     # create dir for yolo drawn frames
     if save_drawn_frames:
-        frames_output = os.path.join(output_path, 'drawn_frames')
-        os.makedirs(frames_output, exist_ok=True)
+        drawn_frames_output = os.path.join(output_path, 'drawn_frames')
+        os.makedirs(drawn_frames_output, exist_ok=True)
 
 
     # set denominator for normalization
@@ -130,7 +130,7 @@ def predict_video(model_path, input_vid, output_dir, conf=0.5, save_annot=False,
             # save individual yolo predicted frame
             if save_drawn_frames:
                 # get image path and image name
-                img_path = os.path.join(frames_output, vid_prefix + f"_drawn_frame_{count}.jpg")
+                img_path = os.path.join(drawn_frames_output, vid_prefix + f"_drawn_frame_{count}.jpg")
 
                 # Visualize the results on the frame
                 annotated_frame = results[0].plot()
