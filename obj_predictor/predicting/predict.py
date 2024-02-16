@@ -49,7 +49,9 @@ def predict_image_save_annot(img, model, confidence= 0.5, save_yolo_img=False):
     predicts_to_txt(predicted_bb, text_name)
 
 
-def predict_video(model_path, input_vid, conf=0.5, save_annot=False, save_frames=False, save_yolo_vid=True):
+
+
+def predict_video(model_path, input_vid, conf=0.5, save_annot=False, save_frames=False, save_yolo_vid=True, save_drawn_frames=False):
     model = YOLO(model_path)
     cap = cv2.VideoCapture(input_vid)
 
@@ -71,8 +73,13 @@ def predict_video(model_path, input_vid, conf=0.5, save_annot=False, save_frames
         os.makedirs(frames_output, exist_ok=True)
 
     if save_annot:
+        print("inside saving annot, aka its true")
         texts_output = os.path.join(output_path, 'pred_labels')
         os.makedirs(texts_output, exist_ok=True)
+
+    if save_annot:
+        frames_output = os.path.join(output_path, 'drawn_frames')
+        os.makedirs(frames_output, exist_ok=True)
 
     count = 0
 
@@ -91,22 +98,29 @@ def predict_video(model_path, input_vid, conf=0.5, save_annot=False, save_frames
 
             if save_annot:
                 predicted_bb = predictions_to_arr(results)
-                txt_path = os.path.join(texts_output, vid_prefix + f"_{count}.txt")
+                txt_path = os.path.join(texts_output, vid_prefix + f"_frame_{count}.txt")
                 predicts_to_txt(predicted_bb, txt_path)
 
             if save_frames:
                 # Save the frame as an image
-                img_path = os.path.join(frames_output, vid_prefix + f"_{count}.jpg")
+                img_path = os.path.join(frames_output, vid_prefix + f"_frame_{count}.jpg")
                 cv2.imwrite(img_path, frame)
 
             if save_yolo_vid:
-                results = model(frame, conf=conf, verbose=False)
-
                 # Visualize the results on the frame
                 annotated_frame = results[0].plot()
 
                 # write frame to videoWriter
                 out.write(annotated_frame)
+
+
+            if save_drawn_frames:
+
+                img_path = os.path.join(frames_output, vid_prefix + f"_drawn_frame_{count}.jpg")
+
+                # Visualize the results on the frame
+                annotated_frame = results[0].plot()
+                cv2.imwrite(img_path, annotated_frame)
 
             count += 1
             progress_bar.update(1)  # Update progress bar
