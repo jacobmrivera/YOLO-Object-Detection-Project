@@ -1,1 +1,1 @@
-from .predicting_videos import *
+from .predict import *
