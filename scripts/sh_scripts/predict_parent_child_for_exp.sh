@@ -12,10 +12,11 @@ confidence=0.7  # Default is 50, 0 == really blurry, 200 == really sharp
 output_dir="Z:\\Jacob\\YOLO_Predicted"
 
 save_frames=0
-save_annot=1
-save_yolo_vid=1
+save_annot=0
+save_yolo_vid=0
 save_drawn_frames=0
 normalize_annot=1
+save_conf=1
 
 
 
@@ -32,11 +33,11 @@ for dir in $directories; do
     dirname=$(basename "$dir")
     video_input="$directory\\$dirname\\cam07_video_r\\${dirname#__}_cam07.mp4"
     echo $video_input
-    python scripts\\py_scripts\\predicting_scripts\\predict_video.py --model_path "$model_path" --video_input "$video_input" --output_dir "$output_dir" --confidence "$confidence" --save_frames "$save_frames" --save_annot "$save_annot" --save_yolo_vid "$save_yolo_vid" --save_drawn_frames "$save_drawn_frames" --normalize_annot "$normalize_annot"
+    python scripts\\py_scripts\\predicting_scripts\\predict_video.py --model_path "$model_path" --video_input "$video_input" --output_dir "$output_dir" --confidence "$confidence" --save_frames "$save_frames" --save_annot "$save_annot" --save_yolo_vid "$save_yolo_vid" --save_drawn_frames "$save_drawn_frames" --normalize_annot "$normalize_annot" --save_conf "$save_conf"
     
     video_input="$directory\\$dirname\\cam08_video_r\\${dirname#__}_cam08.mp4"
     echo $video_input
-    python scripts\\py_scripts\\predicting_scripts\\predict_video.py --model_path "$model_path" --video_input "$video_input" --output_dir "$output_dir" --confidence "$confidence" --save_frames "$save_frames" --save_annot "$save_annot" --save_yolo_vid "$save_yolo_vid" --save_drawn_frames "$save_drawn_frames" --normalize_annot "$normalize_annot"
+    python scripts\\py_scripts\\predicting_scripts\\predict_video.py --model_path "$model_path" --video_input "$video_input" --output_dir "$output_dir" --confidence "$confidence" --save_frames "$save_frames" --save_annot "$save_annot" --save_yolo_vid "$save_yolo_vid" --save_drawn_frames "$save_drawn_frames" --normalize_annot "$normalize_annot" --save_conf "$save_conf"
 
 done
 

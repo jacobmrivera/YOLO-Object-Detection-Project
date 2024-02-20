@@ -30,6 +30,7 @@ def main():
     parser.add_argument("--save_yolo_vid", type=int, required=False, default=True, help="flag to save predicted video.")
     parser.add_argument("--save_drawn_frames", type=int, required=False, default=False, help="flag to save yolo drawn/annotated frames.")
     parser.add_argument("--normalize_annot", type=int, required=False, default=False, help="flag to save annotations normalized or not.")
+    parser.add_argument("--save_conf", type=int, required=False, default=False, help="flag to save annotations normalized or not.")
 
     args = parser.parse_args()
 
@@ -45,8 +46,9 @@ def main():
     save_yolo_vid = True if args.save_yolo_vid == 1 else False
     save_drawn_frames = True if args.save_drawn_frames == 1 else False
     normalize_annot = True if args.normalize_annot == 1 else False
+    save_conf = True if args.save_conf == 1 else False
 
-    predict.predict_video(model_path=model_path, input_vid=video_input, output_dir=output_dir, conf=confidence, save_annot=save_annot, save_frames=save_frames, save_yolo_vid=save_yolo_vid, save_drawn_frames=save_drawn_frames, normalize_annot=normalize_annot)
+    predict.predict_video(model_path=model_path, input_vid=video_input, output_dir=output_dir, conf=confidence, save_annot=save_annot, save_frames=save_frames, save_yolo_vid=save_yolo_vid, save_drawn_frames=save_drawn_frames, normalize_annot=normalize_annot, save_conf=save_conf)
 
     return
 
