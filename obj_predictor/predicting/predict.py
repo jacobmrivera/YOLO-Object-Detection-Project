@@ -17,6 +17,8 @@ def predictions_to_arr(results):
 
     return predicted_bb
 
+
+
 def predicts_to_txt(preds, output_file, width, height, write_conf=False):
     # Write to the file
     with open(output_file, 'w') as file:
@@ -25,7 +27,6 @@ def predicts_to_txt(preds, output_file, width, height, write_conf=False):
                 file.write(f"{int(pred[0])} {round(pred[1][0]/width, 5)} {round(pred[1][1]/height, 5)} {round(pred[1][2]/width, 5)} {round(pred[1][3]/height, 5)} {round(pred[2], 5)}\n")
             else:
                 file.write(f"{int(pred[0])} {round(pred[1][0]/width, 5)} {round(pred[1][1]/height, 5)} {round(pred[1][2]/width, 5)} {round(pred[1][3]/height, 5)} \n")
-            # print(f"{int(pred[0])} {round(pred[1][0]/width, 5)} {round(pred[1][1]/height, 5)} {round(pred[1][2]/width, 5)} {round(pred[1][3]/height, 5)} {round(pred[2], 5)}\n")
 
 
 
