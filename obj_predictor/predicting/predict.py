@@ -54,18 +54,19 @@ def predict_image_save_annot(img, model, output_dir= ".", confidence= 0.5, save_
         cv2.imwrite(out_img, annotated_frame)
 
     predicted_bb = predictions_to_arr(results)
-    print(f"output path pre: {output_dir}")
+    # print(f"output path pre: {output_dir}")
 
-    text_name =  img.split("/")[-1].split('.')[0] + ('_pred_c.txt' if save_conf else '_pred.txt')
+    text_name =  img.split("\\")[-1].split('.')[0] + ('_pred_c.txt' if save_conf else '_pred.txt')
 
-    print(f"test_name: {text_name}")
+    # print(f"test_name: {text_name}")
 
     output_path = os.path.join(output_dir, text_name)
 
-    print(f"output path: {output_path}")
-    input()
+    # print(f"output path: {output_path}")
+    # input()
     predicts_to_txt(predicted_bb, output_path, width, height, save_yolo_img)
 
+    return
 
 
 
@@ -81,7 +82,8 @@ def predict_video(model_path, input_vid, output_dir, conf=0.5, save_annot=False,
     video_pre_path, video_name = os.path.split(input_vid)
     vid_prefix = video_name.split('.')[0]
 
-    output_path =  os.path.join(output_dir, vid_prefix+"_predicted_data")
+    # output_path =  os.path.join(output_dir, vid_prefix+"_predicted_data")
+    output_path = output_dir
     os.makedirs(output_path, exist_ok=True)
 
     # create out opencv video obj

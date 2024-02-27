@@ -4,6 +4,7 @@ import argparse
 import obj_predictor.predicting.predict as predict
 import os
 from tqdm import tqdm
+import shutil
 
 '''
 Created by Jacob Rivera
@@ -41,9 +42,14 @@ def main():
     save_conf = args.save_conf
     normalize_annot = args.normalize_annot
 
+    if (os.path.exists(output_dir)):
+        shutil.rmtree(output_dir)
+    
     os.makedirs(output_dir, exist_ok=True)
 
-    for img in tqdm(os.listdir(input_dir)):
+    dir_label = input_dir.split('\\')[-2]
+
+    for img in tqdm(os.listdir(input_dir),f"Processing frames... {dir_label}"):
         if img.endswith(".jpg"):
             img_path = os.path.join(input_dir, img)
         predict.predict_image_save_annot(img_path, model_path, output_dir, confidence, save_yolo_img, save_conf, normalize_annot)

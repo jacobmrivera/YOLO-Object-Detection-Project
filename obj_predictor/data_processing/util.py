@@ -1,6 +1,8 @@
 import cv2
 import os
 import shutil
+import obj_predictor as op
+from tqdm import tqdm
 
 
 # if number of frames to be over 04d, then change the 4 in the f-string to the number of digits
@@ -215,3 +217,36 @@ def split_data_by_blur(source_dir, destination_dir, threshold):
                 print(f"Copied {filename} - Blur level: {blur_level}")
 
     print("Done processing images.")
+
+
+
+
+def frames_to_video(input_dir, output_video_path, fps=30):
+    # Get the list of image files in the input directory
+    # image_files = [f for f in os.listdir(input_dir) if f.endswith('.png') or f.endswith('.jpg')]
+    image_files = op.data_processing.smooth.list_files_in_directory(input_dir, ".jpg")
+    if not image_files:
+        print("No image files found in the directory.")
+        return
+
+
+    # Get the first image to retrieve dimensions
+    first_image = cv2.imread(os.path.join(input_dir,image_files[0]))
+    height, width, _ = first_image.shape
+
+    # Define the codec and create VideoWriter object
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # You can also use 'XVID', 'MJPG', etc.
+    out = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
+
+    # Write each frame to the video
+    # for img in tqdm(os.listdir(input_dir),f"Processing frames... {dir_label}"):
+
+    for image_file in tqdm(image_files):
+        frame = cv2.imread(os.path.join(input_dir,image_file))
+        out.write(frame)
+
+    # Release VideoWriter and destroy any OpenCV windows
+    out.release()
+    cv2.destroyAllWindows()
+
+    print(f"Video saved to: {output_video_path}")
