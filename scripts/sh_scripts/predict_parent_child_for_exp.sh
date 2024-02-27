@@ -31,7 +31,7 @@ directories=$(find "$directory" -mindepth 1 -maxdepth 1 -type d -name "__*")
 # Iterate through the list of directories
 for dir in $directories; do
     dirname=$(basename "$dir")
-    video_input="$directory\\$dirname\\cam07_video_r\\${dirname#__}_cam07.mp4"
+    video_input="$directory\\$dirname\\cam07_frames_r\\${dirname#__}_cam07.mp4"
     echo $video_input
     python scripts\\py_scripts\\predicting_scripts\\predict_video.py --model_path "$model_path" --video_input "$video_input" --output_dir "$output_dir" --confidence "$confidence" --save_frames "$save_frames" --save_annot "$save_annot" --save_yolo_vid "$save_yolo_vid" --save_drawn_frames "$save_drawn_frames" --normalize_annot "$normalize_annot" --save_conf "$save_conf"
     

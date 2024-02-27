@@ -30,7 +30,7 @@ def predicts_to_txt(preds, output_file, width, height, write_conf=False):
 
 
 
-def predict_image_save_annot(img, model, confidence= 0.5, save_yolo_img=False, save_conf=False):
+def predict_image_save_annot(img, model, output_dir= ".", confidence= 0.5, save_yolo_img=False, save_conf=False, normalize_annot=True):
 
     model = YOLO(model)
     results = model(img, conf=confidence, save_conf=True, verbose=False)
@@ -38,8 +38,13 @@ def predict_image_save_annot(img, model, confidence= 0.5, save_yolo_img=False, s
     img_PIL = Image.open(img)
 
     # Get image width and height
-    img_width, img_height = img_PIL.size
-    
+    width, height = img_PIL.size
+
+    # set denominator for normalization
+    if not normalize_annot:
+        width = 1
+        height = 1
+
     # Visualize the results on the frame
     annotated_frame = results[0].plot()
 
@@ -49,15 +54,17 @@ def predict_image_save_annot(img, model, confidence= 0.5, save_yolo_img=False, s
         cv2.imwrite(out_img, annotated_frame)
 
     predicted_bb = predictions_to_arr(results)
+    print(f"output path pre: {output_dir}")
 
-    # for result in results:
-    # boxes = results[0].boxes
+    text_name =  img.split("/")[-1].split('.')[0] + ('_pred_c.txt' if save_conf else '_pred.txt')
 
-    # for i in range(len(boxes.cls)):
-    #     predicted_bb.append([boxes.cls[i].item(), boxes.xywh[i].tolist(), boxes.conf[i].item()])
-    
-    text_name =  img.split('.')[0] + ('_pred_c.txt' if save_conf else '_pred.txt')
-    predicts_to_txt(predicted_bb, text_name, img_width, img_height, save_yolo_img)
+    print(f"test_name: {text_name}")
+
+    output_path = os.path.join(output_dir, text_name)
+
+    print(f"output path: {output_path}")
+    input()
+    predicts_to_txt(predicted_bb, output_path, width, height, save_yolo_img)
 
 
 
