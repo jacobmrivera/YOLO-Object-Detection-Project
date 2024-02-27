@@ -1,5 +1,4 @@
 # Ignores not from template
-*.pt
 practice_data/
 .DS_Store
 
