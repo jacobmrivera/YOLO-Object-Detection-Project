@@ -1,5 +1,6 @@
 import os
 import re
+from tqdm import tqdm
 
 '''
 Created by Jacob Rivera
@@ -55,7 +56,9 @@ def get_equidistant_points(start, end, num_points, sig_figs=5):
     points = [[round(start[0] + i * step_size * (end[0] - start[0]), sig_figs), 
                round(start[1] + i * step_size * (end[1] - start[1]), sig_figs),
                round(start[2] + i * step_size * (end[2] - start[2]), sig_figs),
-               round(start[3] + i * step_size * (end[3] - start[3]), sig_figs)]
+               round(start[3] + i * step_size * (end[3] - start[3]), sig_figs),
+               round(start[4] + i * step_size * (end[4] - start[4]), sig_figs)]
+
               for i in range(1, num_points - 1)]
 
     return points
@@ -65,7 +68,6 @@ def get_equidistant_points(start, end, num_points, sig_figs=5):
 # returns a dictionary version of bb txt file with
 # obj num as the key
 def txt_to_dict(file_path):
-    print(file_path)
 
     output_dict = {}
     # Open the file in read mode
@@ -76,14 +78,14 @@ def txt_to_dict(file_path):
             line = line.strip()
             line_arr = line.split(" ")
             output_dict[int(line_arr[0])] = [float(item) for item in line_arr[1:]]
-    return output_dict    
+    return output_dict 
 
 
 
 # given a text file, bounding box annotation line will be added
 def add_line_to_txt(file_path, key, arr):
     with open(file_path, 'a') as file:
-        file.write(f"{key} {arr[0]} {arr[1]} {arr[2]} {arr[3]}\n")
+        file.write(f"{key} {arr[0]} {arr[1]} {arr[2]} {arr[3]} {arr[4]}\n")
 
 
         
@@ -98,26 +100,43 @@ Will smooth over as many files in the array that there are, so limit the array s
 def check_window(curr_file, next_files):
     # num_objs = 26
     curr_dict = txt_to_dict(curr_file)
+    '''
+    current dict has the items that i want to check if future frames are missing.
+    '''
     file_dicts = []
+
+    # create an array of dictionarys of the next n files
     for f in next_files:
-        file_dicts.append(txt_to_dict(f))
-        
+        out = txt_to_dict(f)
+        # print(f"out: {out}")
+        file_dicts.append(out)
+
     # loop through all objs in curr_dict
     for i in curr_dict.keys():
-        # print(i, curr_dict[i])
+
+        count = 0
 
         # loop through next n files
-        for index, d in enumerate(file_dicts):
+        index = 0
+        missed = 0
+
+        # loop through forward file dictionaries
+        for d in file_dicts:
+            count += 1
+
             # check if obj from curr is in one of the next files,
             # when it is, get the missing points
-            if i in d:
-                avg_annot = get_equidistant_points(curr_dict[i], d[i], index + 2, sig_figs=5)
-
+            if i in d.keys() and missed == 1:
+                avg_annot = get_equidistant_points(curr_dict[i], d[i], count + 1, sig_figs=5)
                 # add extrapolated points to files missing it
                 for fix in range(index):
                     add_line_to_txt(next_files[fix], i, avg_annot[fix])
-                break
-    
+                missed = 0
+                continue
+            elif (i not in d.keys() ):
+                missed = 1
+
+            index += 1
 
 # input: 
 #   input_dir: directory containing text files
@@ -130,10 +149,9 @@ def smooth_annotations(input_dir, max_skip=2):
     text_files = [os.path.join(input_dir, j) for j in text_files]
     # print(text_files)
 
-    for i in range(0, len(text_files) - max_skip ):
+    for i in tqdm(range(0, len(text_files) - max_skip- 2), total=len(text_files) - max_skip):
         # gets the next max_skips + 1 files to check for skipping objs
-        look_aheads = [text_files[i + j] for j in range(max_skip + 1)]
-        # print(f"i: {i:^6} look_aheads: {look_aheads}")
+        look_aheads = [text_files[i + j] for j in range(1, max_skip + 2)]
 
         check_window(text_files[i], look_aheads)
 

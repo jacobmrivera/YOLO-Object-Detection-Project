@@ -45,15 +45,15 @@ for dir in $directories; do
     
     ###################################
 
-    output_path="${output_dir}\\${dirname#__}_cam08_predicted_data"
+    # output_path="${output_dir}\\${dirname#__}_cam08_predicted_data"
 
-    video_name="${output_path}\\${dirname#__}_cam08_stitched.mp4"
-    input_dir="$directory\\$dirname\\cam08_frames_p"
+    # video_name="${output_path}\\${dirname#__}_cam08_stitched.mp4"
+    # input_dir="$directory\\$dirname\\cam08_frames_p"
 
-    echo "Stitching: $input_dir"
-    python scripts\\py_scripts\\misc\\frames_to_video.py --input_dir "$input_dir" --output_dir "$video_name"
-    echo "Predicting: $video_name"
-    python scripts\\py_scripts\\predicting_scripts\\predict_video.py --model_path "$model_path" --video_input "$video_name" --output_dir "$output_path" --confidence "$confidence" --save_frames "$save_frames" --save_annot "$save_annot" --save_yolo_vid "$save_yolo_vid" --save_drawn_frames "$save_drawn_frames" --normalize_annot "$normalize_annot" --save_conf "$save_conf"
+    # echo "Stitching: $input_dir"
+    # python scripts\\py_scripts\\misc\\frames_to_video.py --input_dir "$input_dir" --output_dir "$video_name"
+    # echo "Predicting: $video_name"
+    # python scripts\\py_scripts\\predicting_scripts\\predict_video.py --model_path "$model_path" --video_input "$video_name" --output_dir "$output_path" --confidence "$confidence" --save_frames "$save_frames" --save_annot "$save_annot" --save_yolo_vid "$save_yolo_vid" --save_drawn_frames "$save_drawn_frames" --normalize_annot "$normalize_annot" --save_conf "$save_conf"
 
 done
 

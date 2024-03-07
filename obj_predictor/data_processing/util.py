@@ -241,7 +241,7 @@ def frames_to_video(input_dir, output_video_path, fps=30):
     # Write each frame to the video
     # for img in tqdm(os.listdir(input_dir),f"Processing frames... {dir_label}"):
 
-    for image_file in tqdm(image_files):
+    for image_file in tqdm(image_files, desc="Stitching frames into video..."):
         frame = cv2.imread(os.path.join(input_dir,image_file))
         out.write(frame)
 
