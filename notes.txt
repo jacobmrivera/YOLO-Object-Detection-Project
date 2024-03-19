@@ -1,0 +1,29 @@
+What we need to train the model:
+- yaml file
+- dataset path
+- training dictionary arguments
+
+
+Data manipulation pre training
+- split the data into train/test OR kfold?
+- generate mirrored version of images
+
+Data manipulation post training
+- smooth over data
+- delete duplicates option
+
+
+Presenting data options
+- genereate object level data
+- draw annotations on frame
+- predict video from model
+- stitch frames from drawn or not drawn frames
+- provide blur stats for a video/frame
+
+
+Blur.py could be a class
+
+draw.py could be a class
+
+Model could be a class that contains training, predict, and drawing functions
+

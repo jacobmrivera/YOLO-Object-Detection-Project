@@ -20,7 +20,7 @@ import obj_predictor as op
 Created by Jacob Rivera
 Spring 2024
 
-Last edit: 02/02/2024
+Last edit: 03/08/2024
 
 Description:
     Train YOLO model from passed aruements
@@ -81,10 +81,10 @@ def main():
 
 
     model = "yolov8s.pt"
-    epochs = 2000
+    epochs = 3000
     device = 0
     project_name = "All_Data_Trainings"
-    run_name = "all_data_2_14_mirrored_80_20_split"
+    run_name = "all_data_2_14_mirrored_v8m"
     data_src = "C:\\Users\\multimaster\\Desktop\\data_to_train_on\\all_annotations_2_14_24_with_mirrored"
 
     k = 5
@@ -98,7 +98,7 @@ def main():
 
     op.data_processing.split.split_data_pipe(dataset_path, dataset_path, split, seed)
     op.data_processing.util.make_config(yaml_out_name, dataset_path, obj_num, obj_dict)
-    model = "yolov8s.pt" #os.path.join(project_name, run_name+"all", "weights", "best.pt") 
+    model = "yolov8m.pt" #os.path.join(project_name, run_name+"all", "weights", "best.pt") 
     op.training.train_model(model, device, yaml_out_name, project_name, run_name, epochs)
 
     

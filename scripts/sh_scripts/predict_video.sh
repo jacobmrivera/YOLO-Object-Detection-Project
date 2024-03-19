@@ -6,18 +6,17 @@
 
 
 # Define the paths
-model_path="All_Data_Trainings\\all_data_2_14_mirrored_80_20_split\\weights\\best.pt"
+model_path="All_Data_Trainings\\all_data_2_14_mirrored_v8n_\\weights\\best.pt"
 video_input="C:\\Users\\multimaster\\Desktop\\dynamic_vids_to_predict\\20230209_10057_cam07.mp4"
-confidence=0.7  # Default is 50, 0 == really blurry, 200 == really sharp
-save_frames=1
-save_annot=1
+confidence=0.8  # Default is 50, 0 == really blurry, 200 == really sharp
+save_frames=0
+save_annot=0
 normalize_annot=1
 save_yolo_vid=1
-save_drawn_frames=1
-normalize_annot=1
+save_drawn_frames=0
 save_conf=1
 
-output_dir="C:\\Users\\multimaster\\Desktop\\dynamic_vids_to_predict."
+output_dir="C:\\Users\\multimaster\\Desktop\\dynamic_vids_to_predict\\model_n"
 
 source venv\\Scripts\\activate
 
