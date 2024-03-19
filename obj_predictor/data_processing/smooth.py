@@ -76,7 +76,8 @@ def txt_to_dict(file_path):
         for line in file:
             # Process each line as needed
             line = line.strip()
-            line_arr = line.split(" ")
+            line_arr = re.split(r'\s+', line)
+
             output_dict[int(line_arr[0])] = [float(item) for item in line_arr[1:]]
     return output_dict 
 
