@@ -15,7 +15,6 @@ import gc
 '''
 Adapted from https://docs.ultralytics.com/guides/kfold-cross-validation/
 
-
 '''
 
 DATASET_PATH = "."
@@ -46,7 +45,7 @@ def prep_labels_df(dataset_path: str, yaml_path: str, indx, cls_idx) -> pd.DataF
             # classes for YOLO label uses integer at first position of each line
             lbl_counter[int(l.split(' ')[0])] += 1
 
-        labels_df.loc[label.stem] = lbl_counter
+        labels_df.loc[label.stem] = lbl_counter.items()
 
     labels_df = labels_df.fillna(0.0) # replace `nan` values with `0.0`
 
@@ -55,7 +54,9 @@ def prep_labels_df(dataset_path: str, yaml_path: str, indx, cls_idx) -> pd.DataF
 
 
 def kfold_data(dataset_path, yaml_file, ksplit=5):
-    labels = sorted(DATASET_PATH.rglob("*labels/*.txt")) # all data in 'labels'
+    dataset_path = Path(dataset_path) # replace with 'path/to/dataset' for your custom data
+
+    labels = sorted(dataset_path.rglob("*labels/*.txt")) # all data in 'labels'
     indx = [l.stem for l in labels] # uses base filename as ID (no extension)
 
     with open(yaml_file, 'r', encoding="utf8") as y:
@@ -81,8 +82,8 @@ def kfold_data(dataset_path, yaml_file, ksplit=5):
     fold_lbl_distrb = pd.DataFrame(index=folds, columns=cls_idx)
 
     for n, (train_indices, val_indices) in enumerate(kfolds, start=1):
-        train_totals = labels_df.iloc[train_indices].sum()
-        val_totals = labels_df.iloc[val_indices].sum()
+        train_totals = labels_df.iloc[train_indices].count()
+        val_totals = labels_df.iloc[val_indices].count()
 
         # To avoid division by zero, we add a small value (1E-7) to the denominator
         ratio = val_totals / (train_totals + 1E-7)
@@ -128,8 +129,10 @@ def kfold_data(dataset_path, yaml_file, ksplit=5):
             lbl_to_path = save_path / split / k_split / 'labels'
 
             # Copy image and label files to new directory (SamefileError if file already exists)
-            shutil.copy(image, img_to_path / image.name)
-            shutil.copy(label, lbl_to_path / label.name)
+            # print(f"img_to_path: {type(img_to_path[0])}")
+
+            shutil.copy(image, img_to_path[0] / image.name)
+            shutil.copy(label, lbl_to_path[0] / label.name)
 
 
     folds_df.to_csv(save_path / "kfold_datasplit.csv")
@@ -155,3 +158,59 @@ def train(dataset_path, yaml_path, ksplit, weights_path, batch_size, epochs, pro
         gc.collect()
 
 
+
+
+
+
+#####################################
+import os
+import pandas as pd
+from sklearn.model_selection import KFold
+
+def read_yolo_dataset(dataset_path, k=5):
+    # Initialize lists to store file paths
+    image_paths = []
+    label_paths = []
+    
+    # Iterate through the images directory and store file paths
+    images_dir = os.path.join(dataset_path, "images")
+    for root, _, files in os.walk(images_dir):
+        for file in files:
+            if file.lower().endswith(('.png', '.jpg', '.jpeg')):
+                image_paths.append(os.path.join(root, file))
+    
+    # Iterate through the labels directory and store file paths
+    labels_dir = os.path.join(dataset_path, "labels")
+    for root, _, files in os.walk(labels_dir):
+        for file in files:
+            if file.lower().endswith('.txt'):
+                label_paths.append(os.path.join(root, file))
+    
+    # Create a DataFrame to store image and label paths
+    df = pd.DataFrame({'image_path': image_paths, 'label_path': label_paths})
+    
+    # Initialize KFold object
+    kf = KFold(n_splits=k, shuffle=True)
+    
+    # Split data into k folds
+    fold_data = []
+    for train_index, test_index in kf.split(df):
+        train_data = df.iloc[train_index]
+        test_data = df.iloc[test_index]
+        fold_data.append((train_data, test_data))
+    
+    return fold_data
+
+# Example usage:
+dataset_path = "path/to/your/yolo_dataset"
+k = 5
+fold_data = read_yolo_dataset(dataset_path, k)
+
+# Access each fold's train and test data
+for i, (train_data, test_data) in enumerate(fold_data):
+    print(f"Fold {i+1}:")
+    print("Train data:")
+    print(train_data.head())
+    print("Test data:")
+    print(test_data.head())
+    print("=" * 50)

@@ -1,6 +1,7 @@
 # Ignores not from template
 practice_data/
 .DS_Store
+k_fold_training_s
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

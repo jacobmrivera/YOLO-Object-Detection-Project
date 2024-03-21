@@ -121,18 +121,18 @@ def draw_bounding_box(img_path, output_path, box_vals, box_string):
 
 def mirror_bounding_box_y_axis(box_vals, image_width, image_height):
     # Calculate original bounding box coordinates
-    left = box_vals[0] - box_vals[2] / 2
-    top = box_vals[1] - box_vals[3] / 2
-    right = box_vals[0] + box_vals[2] / 2
-    bottom = box_vals[1] + box_vals[3] / 2
+    # left = box_vals[0] - box_vals[2] / 2
+    # top = box_vals[1] - box_vals[3] / 2
+    # right = box_vals[0] + box_vals[2] / 2
+    # bottom = box_vals[1] + box_vals[3] / 2
 
     # Mirror the bounding box coordinates across the center of the image
-    mirrored_top = 1 - bottom
-    mirrored_bottom = 1 - top
+    # mirrored_top = 1 - bottom
+    # mirrored_bottom = 1 - top
 
     # New mirrored bounding box coordinates
-    mirrored_center_y = (mirrored_top + mirrored_bottom) / 2
-    mirrored_height = mirrored_bottom - mirrored_top
+    # mirrored_center_y = (mirrored_top + mirrored_bottom) / 2
+    # mirrored_height = mirrored_bottom - mirrored_top
 
     # Return the mirrored bounding box coordinates in YOLO format
     # return [box_vals[0], mirrored_center_y, box_vals[2], mirrored_height]
@@ -141,18 +141,18 @@ def mirror_bounding_box_y_axis(box_vals, image_width, image_height):
 
 def mirror_bounding_box_x_axis(box_vals, image_width, image_height):
     # Calculate original bounding box coordinates
-    left = box_vals[0] - box_vals[2] / 2
-    top = box_vals[1] - box_vals[3] / 2
-    right = box_vals[0] + box_vals[2] / 2
-    bottom = box_vals[1] + box_vals[3] / 2
+    # left = box_vals[0] - box_vals[2] / 2
+    # top = box_vals[1] - box_vals[3] / 2
+    # right = box_vals[0] + box_vals[2] / 2
+    # bottom = box_vals[1] + box_vals[3] / 2
 
     # Mirror the bounding box coordinates across the center of the image
-    mirrored_left = 1 - right
-    mirrored_right = 1 - left
+    # mirrored_left = 1 - right
+    # mirrored_right = 1 - left
 
     # New mirrored bounding box coordinates
-    mirrored_x_center = (mirrored_left + mirrored_right) / 2
-    mirrored_width = mirrored_right - mirrored_left
+    # mirrored_x_center = (mirrored_left + mirrored_right) / 2
+    # mirrored_width = mirrored_right - mirrored_left
 
     # Return the mirrored bounding box coordinates
     # return [mirrored_x_center, box_vals[1], mirrored_width, box_vals[3]]
@@ -161,24 +161,24 @@ def mirror_bounding_box_x_axis(box_vals, image_width, image_height):
 
 def mirror_bounding_box_xy(box_vals, image_width, image_height):
     # Calculate original bounding box coordinates
-    left = box_vals[0] - box_vals[2] / 2
-    top = box_vals[1] - box_vals[3] / 2
-    right = box_vals[0] + box_vals[2] / 2
-    bottom = box_vals[1] + box_vals[3] / 2
+    # left = box_vals[0] - box_vals[2] / 2
+    # top = box_vals[1] - box_vals[3] / 2
+    # right = box_vals[0] + box_vals[2] / 2
+    # bottom = box_vals[1] + box_vals[3] / 2
 
     # Mirror the bounding box coordinates across the x-axis
-    mirrored_left = 1 - right
-    mirrored_right = 1 - left
+    # mirrored_left = 1 - right
+    # mirrored_right = 1 - left
 
     # Mirror the bounding box coordinates across the y-axis
-    mirrored_top = 1 - bottom
-    mirrored_bottom = 1 - top
+    # mirrored_top = 1 - bottom
+    # mirrored_bottom = 1 - top
 
     # New mirrored bounding box coordinates
-    mirrored_x_center = (mirrored_left + mirrored_right) / 2
-    mirrored_y_center = (mirrored_top + mirrored_bottom) / 2
-    mirrored_width = mirrored_right - mirrored_left
-    mirrored_height = mirrored_bottom - mirrored_top
+    # mirrored_x_center = (mirrored_left + mirrored_right) / 2
+    # mirrored_y_center = (mirrored_top + mirrored_bottom) / 2
+    # mirrored_width = mirrored_right - mirrored_left
+    # mirrored_height = mirrored_bottom - mirrored_top
 
     # Return the mirrored bounding box coordinates
     # return [mirrored_x_center, mirrored_y_center, mirrored_width, mirrored_height]
@@ -217,8 +217,6 @@ def process_text_file(input_file, output_file, width, height, direction):
             bb_array = mirror_bounding_box_xy(curr_line_arr[1:], width, height)
         # recreate string to write to output file
         lines[i] = f"{curr_line_arr[0]} {bb_array[0]} {bb_array[1]} {bb_array[2]} {bb_array[3]}\n"
-
-    # print(f"output txt file: {output_file}")
 
     # Create the output directory if it does not exist
     output_txt_dir = os.path.dirname(output_file)
