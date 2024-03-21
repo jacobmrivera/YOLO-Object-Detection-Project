@@ -20,7 +20,7 @@ class DataMaster():
         self.class_dict = class_dict
         self.save_path = save_path if save_path is not None else Path(self.dataset_path / f'{datetime.date.today().isoformat()}_Training-data')
 
-    def split_data_pipe(self, source_dir, output_dir, split, seed):
+    def split_data_pipe(self, split=0.8):
         # Set a seed for reproducibility
         random.seed(self.seed)
 
@@ -51,24 +51,56 @@ class DataMaster():
                 'names': self.class_dict
             }, ds_y)
 
+        self.yaml = dataset_yaml
+
+        # Randomly shuffle the file names using the seeded random function
+        random.shuffle(images)
+        # Calculate the split point based on an split/1-split ratio ex: 80/20
+        split_point = int(split * len(images))
+
+        img_to_path = self.save_path / 'images'
+        lbl_to_path = self.save_path / 'labels'
+
+        # copy train split
+        for img in images[:split_point]:
+            try:
+                shutil.copy(self.dataset_path / 'images' / img, self.save_path / 'train' / 'images' / img)
+                shutil.copy(self.dataset_path / 'labels' / img[:-4]+".txt", self.save_path / 'train' / 'labels' / img[:-4]+".txt")
+            except:
+                print("Could not copy files: " + img)
+                continue
+
+        # copy test split
+        for img in images[split_point:]:
+            try:
+                shutil.copy(self.dataset_path / 'images' / img, self.save_path / 'val' / 'images' / img)
+                shutil.copy(self.dataset_path / 'labels' / img[:-4]+".txt", self.save_path / 'val' / 'labels' / img[:-4]+".txt")
+            except:
+                print("Could not copy files: " + img)
+                continue
+
 
         for image, label in zip(images, labels):
             # Destination directory
             img_to_path = self.save_path / 'images'
             lbl_to_path = self.save_path / 'labels'
 
+            print(f"image: {image}")
+            print(f"img_to_path: {img_to_path}")
+            print(f"image.name: {image.name}")
+
             # Copy image and label files to new directory (SamefileError if file already exists)
             try:
-                shutil.copy(image, img_to_path[0] / image.name)
+                shutil.copy( img_to_path / image.name, image)
             except shutil.SameFileError:
                 pass
             
             try:
-                shutil.copy(label, lbl_to_path[0] / label.name)
+                shutil.copy(label, lbl_to_path / label.name)
             except shutil.SameFileError:
                 pass
 
-        return 1
+        return self.save_path
     
 
     # Sorting function to handle file names with integers 
@@ -127,6 +159,7 @@ class DataMaster():
             img_name_root, img_ext = os.path.splitext(img_name)
             lbl_name_root, lbl_ext = os.path.splitext(img_name)
 
+
             ############### x ################
             img_name_x = Path(img_name_root + "_mirror_acr_x.jpg")
             lbl_name_x = Path(lbl_name_root + "_mirror_acr_x.txt")
@@ -148,9 +181,6 @@ class DataMaster():
             
             self.mirror_image_xy(img, save_path_images / img_name_xy)
             self.process_text_file(lbl, save_path_labels / lbl_name_xy, 'xy')
-
-
-        print()
 
 
     def mirror_image_x(self, input_image_path, output_image_path):
