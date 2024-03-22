@@ -109,30 +109,15 @@ def draw_bounding_boxes(input_file, output_dir=''):
         else:
             print(f"Image {image_name} not found.")
 
-# # Example usage:
-# for i in range(28):
-#     print("Inside Directory: {}".format(i))
-#     input_txt_file = INPUT_DIR.format(i)
-#     draw_bounding_boxes(input_txt_file)
-
-
 
 def draw_single_frame(frame, labels_file, drawn_frame, save_drawn_frame=False):
 
     with open(labels_file, 'r') as file:
         lines = file.readlines()
 
-    # print(labels_file)
-    # print(lines)
-    # RGB: (236, 3, 252)
-    # Draw text with outline
-    # text_color = 'black'
-    # outline_color = 'rgb(236, 3, 252)'
-    # outline_width = 5
 
     img = Image.open(frame)
     draw = ImageDraw.Draw(img)
-
 
     img_width, img_height = img.size
 
