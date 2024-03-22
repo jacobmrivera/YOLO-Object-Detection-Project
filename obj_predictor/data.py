@@ -61,44 +61,46 @@ class DataMaster():
         img_to_path = self.save_path / 'images'
         lbl_to_path = self.save_path / 'labels'
 
+        data_p = self.dataset_path
+        save_p = self.save_path
         # copy train split
-        for img in images[:split_point]:
+        for img in tqdm(images[:split_point], desc="Copying images"):
             try:
-                shutil.copy(self.dataset_path / 'images' / img, self.save_path / 'train' / 'images' / img)
-                shutil.copy(self.dataset_path / 'labels' / img[:-4]+".txt", self.save_path / 'train' / 'labels' / img[:-4]+".txt")
+                shutil.copy(self.dataset_path / 'images' / img.name, self.save_path / 'train' / 'images' / img.name)
+                shutil.copy(self.dataset_path / 'labels' / (img.name[:-4]+".txt"), self.save_path / 'train' / 'labels' / (img.name[:-4]+".txt"))
             except:
-                print("Could not copy files: " + img)
+                print(f"Could not copy files: {img}")
                 continue
 
         # copy test split
-        for img in images[split_point:]:
+        for img in tqdm(images[split_point:], desc="Copying images"):
             try:
-                shutil.copy(self.dataset_path / 'images' / img, self.save_path / 'val' / 'images' / img)
-                shutil.copy(self.dataset_path / 'labels' / img[:-4]+".txt", self.save_path / 'val' / 'labels' / img[:-4]+".txt")
+                shutil.copy(self.dataset_path / 'images' / img.name, self.save_path / 'val' / 'images' / img.name)
+                shutil.copy(self.dataset_path / 'labels' / (img.name[:-4]+".txt"), self.save_path / 'val' / 'labels' / (img.name[:-4]+".txt"))
             except:
-                print("Could not copy files: " + img)
+                print(f"Could not copy files: {img}")
                 continue
 
 
-        for image, label in zip(images, labels):
-            # Destination directory
-            img_to_path = self.save_path / 'images'
-            lbl_to_path = self.save_path / 'labels'
+        # for image, label in zip(images, labels):
+        #     # Destination directory
+        #     img_to_path = self.save_path / 'images'
+        #     lbl_to_path = self.save_path / 'labels'
 
-            print(f"image: {image}")
-            print(f"img_to_path: {img_to_path}")
-            print(f"image.name: {image.name}")
+        #     print(f"image: {image}")
+        #     print(f"img_to_path: {img_to_path}")
+        #     print(f"image.name: {image.name}")
 
-            # Copy image and label files to new directory (SamefileError if file already exists)
-            try:
-                shutil.copy( img_to_path / image.name, image)
-            except shutil.SameFileError:
-                pass
+        #     # Copy image and label files to new directory (SamefileError if file already exists)
+        #     try:
+        #         shutil.copy( img_to_path / image.name, image)
+        #     except shutil.SameFileError:
+        #         pass
             
-            try:
-                shutil.copy(label, lbl_to_path / label.name)
-            except shutil.SameFileError:
-                pass
+        #     try:
+        #         shutil.copy(label, lbl_to_path / label.name)
+        #     except shutil.SameFileError:
+        #         pass
 
         return self.save_path
     
