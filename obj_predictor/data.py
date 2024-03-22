@@ -22,7 +22,39 @@ SUPPORTED_EXTENSIONS = ['.jpg', '.jpeg', '.png']
 
 
 class DataMaster():
-    def __init__(self, dataset_path:str|Path, seed: int, class_dict, save_path=None) -> None:
+    """
+    Class to handle all(most) data related operations. 
+
+
+
+    ...
+
+    Attributes
+    ----------
+    dataset_path : str|Path
+        a path-like string or Path object
+        Points to top level dataset directory with images/ and labels/ subdirs
+    seed : int
+        value for consistent shuffling before splitting data into train/test or k folds (default 32)
+    class_dict : dict
+        dictionary with all classes to be expected in the dataset
+        defaultly set to the constant in constants.py, but a unique dict can be passed for processing
+    save_path : str|Path
+        a path-like string or Path object pointing to location where any output data should be placed
+        default: subdir in dataset_path/{today's date}_Training-data/
+
+    Methods
+    -------
+    split_data_pipe(split:int) -> str|Path
+        Divides self.dataset_path into a train and val split.
+        
+    list_files_in_directory(self, directory_path, ending:str=None) -> list[str]
+        Returns a list all files with a certain ending in the dir directory_path in lexographical order
+
+
+
+    """
+    def __init__(self, dataset_path:str|Path, seed: int, class_dict=constants.CLASSES_DICT, save_path=None) -> None:
         self.dataset_path = Path(dataset_path)
         self.seed = seed
         self.class_dict = class_dict
@@ -31,8 +63,9 @@ class DataMaster():
         # Set a seed for reproducibility
         random.seed(self.seed)
 
-    def split_data_pipe(self, split=constants.DEFUALT_DATA_SPLIT):
 
+
+    def split_data_pipe(self, split=constants.DEFUALT_DATA_SPLIT):
 
         labels = sorted(self.dataset_path.rglob("*labels/*.txt")) # all data in 'labels'
 
@@ -91,24 +124,26 @@ class DataMaster():
 
     # Sorting function to handle file names with integers 
     # without, sorts like 1, 10, 100, 1000, 1001
-    def natural_sort_key(self, filename):
+    def __natural_sort_key(self, filename):
         # Split the filename into parts of digits and non-digits
         parts = [int(part) if part.isdigit() else part for part in re.split(r'(\d+)', filename)]
         return parts
 
 
     # Returns a list of all files with a particular ending from a dir
-    def list_files_in_directory(self, directory_path, ending):
+    def list_files_in_directory(self, directory_path:str|Path, ending:str=None) -> list[str]:
         try:
             # Get all files in the directory
             files = os.listdir(directory_path)
 
-            # Filter the list to include only text files (files with a ".txt" extension)
-            filtered_files = [file for file in files if file.lower().endswith(ending)]
-
+            if ending:
+                # Filter the list to include only text files (files with a ".txt" extension)
+                files_list = [file for file in files if file.lower().endswith(ending)]
+            else:
+                files_list = [file for file in files if file.lower()]
+            
             # Sort the list of files alphabetically
-            sorted_files = sorted(filtered_files, key=self.natural_sort_key)
-
+            sorted_files = sorted(files_list, key=self.__natural_sort_key)
             return sorted_files
         
         except OSError as e:
@@ -353,6 +388,7 @@ class DataMaster():
     to the appropriate file extension.
     ''' 
     ### NOT TESTED ###
+    # !!! need to add safety catches
     def batch_gen_blur_levels(self, input_dir, output_dir, threshold):
         img_count = 0
 
@@ -410,6 +446,7 @@ class DataMaster():
     # output: none, creates text files in output_dir
     ###
     ### NOT TESTED ###
+    # !!! need to add safety catches
     def get_obj_blur_levels(self, parent_dir, num_obj, threshold:int=constants.DEFUALT_BLUR_THRESHOLD, output_dir=''):
 
         for i in range(num_obj):
@@ -705,32 +742,4 @@ class DataMaster():
     def add_line_to_txt(file_path, key, arr):
         with open(file_path, 'a') as file:
             file.write(f"{key} {arr[0]} {arr[1]} {arr[2]} {arr[3]} {arr[4]}\n")
-
-
-
-    # Sorting function to handle file names with integers 
-    # without, sorts like 1, 10, 100, 1000, 1001
-    def natural_sort_key(filename):
-        # Split the filename into parts of digits and non-digits
-        parts = [int(part) if part.isdigit() else part for part in re.split(r'(\d+)', filename)]
-        return parts
-
-
-    # Returns a list of all files with a particular ending from a dir
-    def list_files_in_directory(self, directory_path, ending):
-        try:
-            # Get all files in the directory
-            files = os.listdir(directory_path)
-
-            # Filter the list to include only text files (files with a ".txt" extension)
-            filtered_files = [file for file in files if file.lower().endswith(ending)]
-
-            # Sort the list of files alphabetically
-            sorted_files = sorted(filtered_files, key=self.natural_sort_key)
-
-            return sorted_files
-        
-        except OSError as e:
-            print(f"Error: {e}")
-            return []
 

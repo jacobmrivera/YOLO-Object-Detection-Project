@@ -2,7 +2,7 @@ DEFUALT_BLUR_THRESHOLD = 50
 DEFUALT_DATA_SPLIT = 0.8
 
 
-
+CLASSES_DICT = {0, 'kettle'}
 RGB_DICT = {
     0: 'rgb(236, 3, 252)',
     1: 'rgb(192, 32, 64)',
