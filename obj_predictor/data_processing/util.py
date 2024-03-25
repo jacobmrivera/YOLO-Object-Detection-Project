@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 
 # if number of frames to be over 04d, then change the 4 in the f-string to the number of digits
-def extract_all_frames(input_vid, output_dir, frames_prefix="frame_", debug=0):
+def extract_all_frames(input_vid, output_dir="", frames_prefix="frame_", debug=0):
     # Open the video file
     video = cv2.VideoCapture(input_vid)
 

@@ -6,41 +6,25 @@ from tqdm import tqdm
 import torch
 from ultralytics.models.yolo.detect import DetectionTrainer
 from pathlib import Path
+from . import constants
 
-class PredictorModel(DetectionTrainer):
+REMOVE_DUPLICATE_OBJ_PREDS = True
 
-    def __init__(self,) -> None:
-        self.model=None
+class PredictorModel:
+    def __init__(self, model_path: str|Path) -> None:
+        self.model = YOLO(model_path)
 
 
     def set_model(self, model: str|Path):
-        self.model = model
+        self.model = YOLO(model)
         return
-    
-    def predictions_to_arr(self, results):
-        predicted_bb = []
-        boxes = results[0].boxes
 
-        for i in range(len(boxes.cls)):
-            # print(boxes.cls[i].item(), boxes.xywh[i].tolist())
-            predicted_bb.append([boxes.cls[i].item(), boxes.xywh[i].tolist(), boxes.conf[i].item()])
 
-        return predicted_bb
-
-    def predicts_to_txt(self, preds, output_file, width, height, write_conf=False):
-        # Write to the file
-        with open(output_file, 'w') as file:
-            for pred in preds:
-                if write_conf:
-                    file.write(f"{int(pred[0])} {round(pred[1][0]/width, 5)} {round(pred[1][1]/height, 5)} {round(pred[1][2]/width, 5)} {round(pred[1][3]/height, 5)} {round(pred[2], 5)}\n")
-                else:
-                    file.write(f"{int(pred[0])} {round(pred[1][0]/width, 5)} {round(pred[1][1]/height, 5)} {round(pred[1][2]/width, 5)} {round(pred[1][3]/height, 5)} \n")
-
-    def predict_image_save_annot(self, img, model, output_dir= ".", confidence= 0.5, save_yolo_img=False, save_conf=False, normalize_annot=True):
+    def predict_image(self, img, output_dir= None, save_yolo_img=False, save_conf=False, normalize_annot=True):
         if not self.model:
             raise ValueError("Model not set.")
         
-        results = self.model(img, conf=confidence, save_conf=True, verbose=False)
+        results = self.model(img, conf=constants.DEFAULT_CONF_VAL, save_conf=True, verbose=False)
 
         img_PIL = Image.open(img)
 
@@ -61,25 +45,29 @@ class PredictorModel(DetectionTrainer):
             cv2.imwrite(out_img, annotated_frame)
 
         predicted_bb = self.predictions_to_arr(results)
-        # print(f"output path pre: {output_dir}")
 
         text_name =  img.split("\\")[-1].split('.')[0] + ('_pred_c.txt' if save_conf else '_pred.txt')
-
-        # print(f"test_name: {text_name}")
-
         output_path = os.path.join(output_dir, text_name)
 
-        # print(f"output path: {output_path}")
-        # input()
         self.predicts_to_txt(predicted_bb, output_path, width, height, save_yolo_img)
 
         return
 
-    def predict_video(self, model_path, input_vid, output_dir, conf=0.5, save_annot=False, save_frames=False, save_yolo_vid=True, save_drawn_frames=False, normalize_annot=True, save_conf=False):
+    def predict_video(self, 
+        input_vid, 
+        output_vid_name=None,
+        output_dir=None, 
+        save_annot=False, 
+        save_frames=False, 
+        save_yolo_vid=True, 
+        save_drawn_frames=False, 
+        normalize_annot=True, 
+        save_conf=True
+        ):
         if not self.model:
             raise ValueError("Model not set.")
 
-        cap = cv2.VideoCapture(input_vid)
+        cap = cv2.VideoCapture(str(input_vid))
 
         device = 0 if torch.cuda.is_available() else None
 
@@ -89,13 +77,19 @@ class PredictorModel(DetectionTrainer):
         video_pre_path, video_name = os.path.split(input_vid)
         vid_prefix = video_name.split('.')[0]
 
-        # output_path =  os.path.join(output_dir, vid_prefix+"_predicted_data")
-        output_path = output_dir
+        if output_dir == None:
+            output_path = input_vid.parent
+        else:
+            output_path = output_dir
         os.makedirs(output_path, exist_ok=True)
 
         # create out opencv video obj
         if save_yolo_vid:
-            output_vid = os.path.join(output_path, "predicted.mp4")
+            if output_vid_name is None:
+                output_vid = os.path.join(output_path, "predicted.mp4")
+            else:
+                output_vid = os.path.join(output_path, output_vid_name)
+
             out = cv2.VideoWriter(output_vid, cv2.VideoWriter_fourcc(*'mp4v'), int(cap.get(cv2.CAP_PROP_FPS)), (width, height))
 
         # create dir for frames
@@ -113,9 +107,9 @@ class PredictorModel(DetectionTrainer):
             drawn_frames_output = os.path.join(output_path, 'drawn_frames')
             os.makedirs(drawn_frames_output, exist_ok=True)
 
-        if save_conf:
-            text_conf_output = os.path.join(output_path, 'pred_labels_w_conf')
-            os.makedirs(text_conf_output, exist_ok=True)
+        # if save_annot and save_conf:
+        #     text_conf_output = os.path.join(output_path, 'pred_labels_w_conf')
+        #     os.makedirs(text_conf_output, exist_ok=True)
 
         # set denominator for normalization
         if not normalize_annot:
@@ -134,18 +128,17 @@ class PredictorModel(DetectionTrainer):
             success, frame = cap.read()
 
             if success:
-
-                results =  self.model(frame, device=device, conf=conf, verbose=False)
+                results =  self.model(frame, device=device, conf=constants.DEFAULT_CONF_VAL, verbose=False)
                 predicted_bb = self.predictions_to_arr(results)
 
                 # generate text files if saving annotations
                 if save_annot:
                     txt_path = os.path.join(texts_output, vid_prefix + f"_frame_{count}.txt")
-                    self.predicts_to_txt(predicted_bb, txt_path, width, height, False)
-
-                if save_conf:
-                    txt_path = os.path.join(text_conf_output, vid_prefix + f"_frame_c_{count}.txt")
                     self.predicts_to_txt(predicted_bb, txt_path, width, height, save_conf)
+
+                # if save_conf:
+                #     txt_path = os.path.join(text_conf_output, vid_prefix + f"_frame_c_{count}.txt")
+                #     self.predicts_to_txt(predicted_bb, txt_path, width, height, save_conf)
 
                 # save frame if supposed to
                 if save_frames:
@@ -186,52 +179,37 @@ class PredictorModel(DetectionTrainer):
         return
 
 
-    def predict_vid_from_json(self, json_config):
-        if not self.model:
-            raise ValueError("Model not set.")
-
-        # model size letter for name of output video
-        model_letter = json_config["training"]["model"][-4]
-        # model_letter = 's'
-        # path to original video
-        video_path = json_config["predict"]["video_path"]
-    #  video_path = "C:\\Users\\multimaster\\Desktop\\YOLO-github-11_6_23\\data\\videos\\orig\\exp351_sub2_parent.mp4"
-        # path and name of output file -- currently uses old name and appends run info
-        video_path_out = json_config["predict"]["video_path_name_out"]
-        # video_path_out = "C:\\Users\\multimaster\\Desktop\\YOLO-github-11_6_23\\data\\videos\\predicted\\{}_{}_supp_1_run2.mp4" #runner.json_config["predict"]["video_path_name_out"]
-
-        # video_path_out = video_path_out.format(video_path.split('\\')[-1][:-4],model_letter)
-
-        width = json_config["constants"]["W"]
-        height = json_config["constants"]["H"]
-        confidence = json_config["constants"]["CONFIDENCE"]
 
 
-        cap = cv2.VideoCapture(video_path)
-        out = cv2.VideoWriter(video_path_out, cv2.VideoWriter_fourcc(*'mp4v'), int(cap.get(cv2.CAP_PROP_FPS)), (width, height))
+    def predicts_to_txt(self, preds_dict, output_file, width, height, write_conf=False):
+        # Write to the file
+        with open(output_file, 'w') as file:
+            for obj_num in preds_dict.keys():
+                if write_conf:
+                    file.write(f"{int(obj_num)} {round(preds_dict[obj_num][1][0]/width, 5)} {round(preds_dict[obj_num][1][1]/height, 5)} {round(preds_dict[obj_num][1][2]/width, 5)} {round(preds_dict[obj_num][1][3]/height, 5)} {round(preds_dict[obj_num][2], 5)}\n")
+                else:
+                    file.write(f"{int(obj_num)} {round(preds_dict[obj_num][1][0]/width, 5)} {round(preds_dict[obj_num][1][1]/height, 5)} {round(preds_dict[obj_num][1][2]/width, 5)} {round(preds_dict[obj_num][1][3]/height, 5)} \n")
 
 
-        # Loop through the video frames
-        while cap.isOpened():
-            # Read a frame from the video
-            success, frame = cap.read()
+    def predictions_to_arr(self, results):
+        predicted_dict = {}
+        boxes = results[0].boxes
 
-            if success:
-                # Run YOLOv8 inference on the frame
-                results = self.model(frame, imgsz=width, conf=confidence,)
+        for i in range(len(boxes.cls)):
+            # if the obj num is already a key in the dict and has a greater confidence score, replace 
+            if boxes.cls[i].item() in predicted_dict.keys() and boxes.conf[i].item() >  predicted_dict[boxes.cls[i].item()][2]:
+                predicted_dict[boxes.cls[i].item()] = [boxes.cls[i].item(), boxes.xywh[i].tolist(), boxes.conf[i].item()]
+            # if the obj is not in the dictionary, just add it
+            elif  boxes.cls[i].item() not in predicted_dict.keys():
+                predicted_dict[boxes.cls[i].item()] = [boxes.cls[i].item(), boxes.xywh[i].tolist(), boxes.conf[i].item()]
+            # no else
 
-                # Visualize the results on the frame
-                annotated_frame = results[0].plot()
+        return predicted_dict
 
-                # write frame to videoWriter
-                out.write(annotated_frame)
-            else:
-                # Break the loop if the end of the video is reached
-                break
+    def predict_frames(self, img, output_dir= None, save_yolo_img=False, save_conf=False, normalize_annot=True):
+        print()
 
-        # Release the video capture object and close the display window
-        cap.release()
-        out.release()
-        cv2.destroyAllWindows()
-
-        return
+        '''
+        given a directory, provide annootations for eac frame in an output dir
+        
+        '''

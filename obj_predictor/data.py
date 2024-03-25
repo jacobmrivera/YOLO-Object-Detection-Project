@@ -12,11 +12,6 @@ import cv2
 
 from . import constants
 
-'''
-added: blur,
-'''
-
-
 
 SUPPORTED_EXTENSIONS = ['.jpg', '.jpeg', '.png']
 
@@ -168,6 +163,9 @@ class DataMaster():
 
             # Sort the list of files alphabetically
             sorted_files = sorted(files_list, key=self.__natural_sort_key)
+
+            for i in range(len(sorted_files)):
+                sorted_files[i] = os.path.join(directory_path, sorted_files[i])
             return sorted_files
 
         except OSError as e:
@@ -525,12 +523,12 @@ class DataMaster():
 
 
 
-    def draw_single_frame(frame, labels_file, drawn_frame, save_drawn_frame=False):
-
+    def draw_single_frame(self, frame, labels_file, drawn_frame, save_drawn_frame=False):
+        print(labels_file)
         with open(labels_file, 'r') as file:
             lines = file.readlines()
 
-
+        print(f"frame: {frame}")
         img = Image.open(frame)
         draw = ImageDraw.Draw(img)
 
@@ -608,14 +606,14 @@ class DataMaster():
     #
     # returns: nothing
     def draw_annot_on_video(self, input_vid, output_vid, predictions_dir):
-        cap = cv2.VideoCapture(input_vid)
+        cap = cv2.VideoCapture(str(input_vid))
 
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         out = cv2.VideoWriter(output_vid, cv2.VideoWriter_fourcc(*'mp4v'), int(cap.get(cv2.CAP_PROP_FPS)), (width, height))
 
-        predictions_files_arr = self.smooth.list_files_in_directory(predictions_dir, '.txt')
+        predictions_files_arr = self.list_files_in_directory(predictions_dir, '.txt')
         count = 0
 
         # Loop through the video frames
@@ -651,7 +649,7 @@ class DataMaster():
     # returns a list of bounding box coordinates arrays
     # 
     # Averages the annotations across the missed frames
-    def get_equidistant_points(start, end, num_points, sig_figs=5):
+    def get_equidistant_points(self, start, end, num_points, sig_figs=5):
         if num_points < 2:
             raise ValueError("Number of points must be at least 2.")
         # elif start[0] != end[0]:
@@ -730,7 +728,7 @@ class DataMaster():
     #   max_skips: number of frames to fill in missing objects
     # output:
     #   none
-    def smooth_annotations(self, input_dir, max_skip=2):
+    def smooth_annotations(self, input_dir, max_skip=5):
 
         text_files = self.list_files_in_directory(input_dir, '.txt')
         text_files = [os.path.join(input_dir, j) for j in text_files]
@@ -746,7 +744,7 @@ class DataMaster():
 
     # returns a dictionary version of bb txt file with
     # obj num as the key
-    def txt_to_dict(file_path):
+    def txt_to_dict(self, file_path):
 
         output_dict = {}
         # Open the file in read mode
@@ -763,7 +761,24 @@ class DataMaster():
 
 
     # given a text file, bounding box annotation line will be added
-    def add_line_to_txt(file_path, key, arr):
+    def add_line_to_txt(self, file_path, key, arr):
         with open(file_path, 'a') as file:
             file.write(f"{key} {arr[0]} {arr[1]} {arr[2]} {arr[3]} {arr[4]}\n")
 
+
+    def batch_draw_bb(self, images_dir, labels_dir, output_dir):
+
+        os.makedirs(output_dir, exist_ok=True)
+
+        all_images = self.list_files_in_directory(images_dir, '.jpg')
+        all_annots = self.list_files_in_directory(labels_dir, ".txt")
+
+        for i in tqdm(range(len(all_images)), desc="Drawing annotations on images..."):
+            img_path = os.path.join(images_dir, all_images[i])
+
+            text_file = os.path.join(labels_dir, all_annots[i])
+
+            path, img_root = os.path.split(all_images[i])
+            drawn_img = os.path.join(output_dir, img_root[:-4] + "_drawn.jpg")
+
+            self.draw_single_frame(img_path, text_file, drawn_img, True )
