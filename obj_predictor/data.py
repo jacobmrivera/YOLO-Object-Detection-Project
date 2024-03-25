@@ -25,8 +25,6 @@ class DataMaster():
     """
     Class to handle all(most) data related operations. 
 
-
-
     ...
 
     Attributes
@@ -34,8 +32,6 @@ class DataMaster():
     dataset_path : str|Path
         a path-like string or Path object
         Points to top level dataset directory with images/ and labels/ subdirs
-    seed : int
-        value for consistent shuffling before splitting data into train/test or k folds (default 32)
     class_dict : dict
         dictionary with all classes to be expected in the dataset
         defaultly set to the constant in constants.py, but a unique dict can be passed for processing
@@ -148,9 +144,9 @@ class DataMaster():
 
 
         return self.save_path
-    
 
-    # Sorting function to handle file names with integers 
+
+    # Sorting function to handle file names with integers
     # without, sorts like 1, 10, 100, 1000, 1001
     def __natural_sort_key(self, filename):
         # Split the filename into parts of digits and non-digits
@@ -169,18 +165,18 @@ class DataMaster():
                 files_list = [file for file in files if file.lower().endswith(ending)]
             else:
                 files_list = [file for file in files if file.lower()]
-            
+
             # Sort the list of files alphabetically
             sorted_files = sorted(files_list, key=self.__natural_sort_key)
             return sorted_files
-        
+
         except OSError as e:
             print(f"Error: {e}")
             return []
 
-    
+
     def generate_mirror_vars(self, put_back:bool = True):
-        
+
         # if user wants mirrored data to not be put with dataset
         if not put_back:
             save_path = self.save_path / 'mirrored'
@@ -215,12 +211,12 @@ class DataMaster():
 
             self.mirror_image_x(img, save_path_images / img_name_x)
             self.process_text_file(lbl, save_path_labels / lbl_name_x, 'x')
-            
+
 
             ############### y ################
             img_name_y = Path(img_name_root + "_mirror_acr_y.jpg")
             lbl_name_y = Path(lbl_name_root + "_mirror_acr_y.txt")
-            
+
             self.mirror_image_y(img, save_path_images / img_name_y)
             self.process_text_file(lbl, save_path_labels / lbl_name_y, 'y')
 
@@ -228,7 +224,7 @@ class DataMaster():
             ############### xy ###############
             img_name_xy = Path(img_name_root + "_mirror_acr_xy.jpg")
             lbl_name_xy = Path(lbl_name_root + "_mirror_acr_xy.txt")
-            
+
             self.mirror_image_xy(img, save_path_images / img_name_xy)
             self.process_text_file(lbl, save_path_labels / lbl_name_xy, 'xy')
 
