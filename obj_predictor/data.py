@@ -47,21 +47,49 @@ class DataMaster():
     -------
     split_data_pipe(split:int) -> str|Path
         Divides self.dataset_path into a train and val split.
-        
+
     list_files_in_directory(self, directory_path, ending:str=None) -> list[str]
         Returns a list all files with a certain ending in the dir directory_path in lexographical order
+
+    list_files_in_directory(self, directory_path:str|Path, ending:str=None) -> list[str]
+
+
+    generate_mirror_vars(self, put_back:bool = True)
+
+    mirror_image_x(self, input_image_path, output_image_path)
+
+    mirror_image_y(input_image_path, output_image_path)
+
+    mirror_image_xy(input_image_path, output_image_path)
+
+    mirror_bounding_box_x_axis(bb_array)
+
+    mirror_bounding_box_y_axis(bb_array)
+
+    mirror_bounding_box_xy(bb_array)
+
+    process_text_file(self, input_file, output_file, direction)
+
+    batch_gen_blur_levels(self, input_dir, output_dir, threshold)
+
+    get_blur_level(image_path)
+
+    get_obj_blur_levels(self, parent_dir, num_obj, threshold:int=constants.DEFUALT_BLUR_THRESHOLD, output_dir='')
+
+    draw_single_frame(frame, labels_file, drawn_frame, save_drawn_frame=False):
+
+
 
 
 
     """
-    def __init__(self, dataset_path:str|Path, seed: int, class_dict=constants.CLASSES_DICT, save_path=None) -> None:
+    def __init__(self, dataset_path:str|Path, class_dict=constants.CLASSES_DICT, save_path=None) -> None:
         self.dataset_path = Path(dataset_path)
-        self.seed = seed
         self.class_dict = class_dict
         self.save_path = save_path if save_path is not None else Path(self.dataset_path / f'{datetime.date.today().isoformat()}_Training-data')
 
         # Set a seed for reproducibility
-        random.seed(self.seed)
+        random.seed(constants.SEED)
 
 
 
