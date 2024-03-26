@@ -33,10 +33,10 @@ for dir in $directories; do
 
     input_dir="$directory\\$dirname\\cam07_frames_p"
     video_output_dir="$output_path\\${dirname#__}_cam07_predicted_data\\stitched_frames.mp4"
+    output_dir="$output_path\\${dirname#__}_cam07_predicted_data\\pred_labels_w_conf"
 
     python scripts\\py_scripts\\misc\\frames_to_video.py --input_dir "$input_dir" --output_dir "$output_dir"
 
-    output_dir="$output_path\\${dirname#__}_cam07_predicted_data\\pred_labels_w_conf"
 
 
 

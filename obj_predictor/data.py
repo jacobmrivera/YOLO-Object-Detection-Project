@@ -524,11 +524,9 @@ class DataMaster():
 
 
     def draw_single_frame(self, frame, labels_file, drawn_frame, save_drawn_frame=False):
-        print(labels_file)
         with open(labels_file, 'r') as file:
             lines = file.readlines()
 
-        print(f"frame: {frame}")
         img = Image.open(frame)
         draw = ImageDraw.Draw(img)
 

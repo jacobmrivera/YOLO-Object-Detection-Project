@@ -236,7 +236,7 @@ def frames_to_video(input_dir, output_video_path, fps=30):
 
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # You can also use 'XVID', 'MJPG', etc.
-    out = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
+    out = cv2.VideoWriter(str(output_video_path), fourcc, fps, (width, height))
 
     # Write each frame to the video
     # for img in tqdm(os.listdir(input_dir),f"Processing frames... {dir_label}"):

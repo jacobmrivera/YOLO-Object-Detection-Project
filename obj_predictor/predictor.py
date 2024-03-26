@@ -20,7 +20,8 @@ class PredictorModel:
         return
 
 
-    def predict_image(self, img, output_dir= None, save_yolo_img=False, save_conf=False, normalize_annot=True):
+    def predict_image(self, img, annot_output_path:str|Path=None, 
+                       drawn_frame_output_path:str|Path = None, save_yolo_img=False, save_conf=True, normalize_annot=True):
         if not self.model:
             raise ValueError("Model not set.")
         
@@ -41,15 +42,16 @@ class PredictorModel:
 
         # Save the frame as an image
         if save_yolo_img:
-            out_img = img.split('.')[0] + "_pred.jpg"
+            out_img = drawn_frame_output_path / img.split('.')[0] + "_pred.jpg"
+            print(out_img)
             cv2.imwrite(out_img, annotated_frame)
 
         predicted_bb = self.predictions_to_arr(results)
 
         text_name =  img.split("\\")[-1].split('.')[0] + ('_pred_c.txt' if save_conf else '_pred.txt')
-        output_path = os.path.join(output_dir, text_name)
+        output_path = os.path.join(annot_output_path, text_name)
 
-        self.predicts_to_txt(predicted_bb, output_path, width, height, save_yolo_img)
+        self.predicts_to_txt(predicted_bb, output_path, width, height, save_conf)
 
         return
 
@@ -181,7 +183,7 @@ class PredictorModel:
 
 
 
-    def predicts_to_txt(self, preds_dict, output_file, width, height, write_conf=False):
+    def predicts_to_txt(self, preds_dict, output_file, width, height, write_conf):
         # Write to the file
         with open(output_file, 'w') as file:
             for obj_num in preds_dict.keys():
@@ -206,10 +208,23 @@ class PredictorModel:
 
         return predicted_dict
 
-    def predict_frames(self, img, output_dir= None, save_yolo_img=False, save_conf=False, normalize_annot=True):
-        print()
+    def predict_frames(self, 
+                       frames_dir:str|Path, 
+                       annot_output_path:str|Path=None, 
+                       drawn_frame_output_path:str|Path = None,
+                       save_yolo_img:bool=False, 
+                       save_conf:bool=True, 
+                       normalize_annot=True):
 
         '''
-        given a directory, provide annootations for eac frame in an output dir
+        given a directory, provide annootations for each frame in an output dir
         
         '''
+        all_files = os.listdir(frames_dir)
+        # labels_path = video_path.parent / "pred_labels"
+        for file in tqdm(all_files, desc="Predicting frames..."):
+            full_path = os.path.join(frames_dir, file)
+
+            self.predict_image(full_path, annot_output_path=annot_output_path, drawn_frame_output_path=drawn_frame_output_path, save_yolo_img=save_yolo_img, save_conf=save_conf, normalize_annot=normalize_annot)
+
+        return
