@@ -28,12 +28,8 @@ def main():
     # instantiate datamaster class
     dataHandler = DataMaster(model_path)
 
-    count = 0
     for sub in subject_directories:
-        count += 1
-        if count < 3:
-            continue
-        
+
         # cam 7
         frames_path = sub / "cam07_frames_p" 
         sub_output = output_path / Path(sub.name + "_cam07_frames_predicted_data")
