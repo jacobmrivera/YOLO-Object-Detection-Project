@@ -4,6 +4,8 @@ DEFAULT_CONF_VAL = 0.8
 
 SEED = 32
 
+SUPPORTED_EXTENSIONS = ['.jpg', '.jpeg', '.png']
+
 CLASSES_DICT = {0, 'kettle'}
 RGB_DICT = {
     0: 'rgb(236, 3, 252)',

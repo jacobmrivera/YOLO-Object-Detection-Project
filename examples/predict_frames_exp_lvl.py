@@ -28,7 +28,11 @@ def main():
     # instantiate datamaster class
     dataHandler = DataMaster(model_path)
 
+    count = 0
     for sub in subject_directories:
+        count += 1
+        if count < 3:
+            continue
         
         # cam 7
         frames_path = sub / "cam07_frames_p" 
@@ -37,7 +41,7 @@ def main():
         # set up the labels and output paths
         labels_path = sub_output / "predicted_labels"
         os.makedirs(labels_path, exist_ok=True)
-
+        print(f"Processing: {frames_path} ...")
         # Predict frames 
         predictor.predict_frames(frames_dir = frames_path,
                                  annot_output_path = labels_path)
@@ -48,6 +52,7 @@ def main():
 
         # cam 8
         frames_path = sub / "cam08_frames_p" 
+        print(f"Processing: {frames_path} ...")
 
         sub_output = output_path / Path(sub.name + "_cam08_frames_predicted_data")
 

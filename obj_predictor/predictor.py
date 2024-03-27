@@ -25,6 +25,9 @@ class PredictorModel:
         if not self.model:
             raise ValueError("Model not set.")
         
+        file_extension = img.suffix
+        if file_extension not in constants.SUPPORTED_EXTENSIONS:
+            return
         results = self.model(img, conf=constants.DEFAULT_CONF_VAL, save_conf=True, verbose=False)
 
         img_PIL = Image.open(img)
