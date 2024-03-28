@@ -21,12 +21,17 @@ class PredictorModel:
 
 
     def predict_image(self, 
-                      img:Path, 
-                      annot_output_path:Path=Path("."), 
-                      drawn_frame_output_path:Path = Path("."), 
-                      save_yolo_img:bool=False, 
-                      save_conf:bool=True, 
-                      normalize_annot:bool=True):
+        img:Path, 
+        annot_output_path:Path=None, 
+        drawn_frame_output_path:Path = None, 
+        save_yolo_img:bool=False, 
+        save_conf:bool=True, 
+        normalize_annot:bool=True):
+
+        if annot_output_path is None:
+            annot_output_path = img.parent
+        if drawn_frame_output_path is None:
+            drawn_frame_output_path = img.parent
         if not self.model:
             raise ValueError("Model not set.")
         

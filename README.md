@@ -5,6 +5,9 @@ Runnable scripts can be found under scripts/ dir. It is not requires to have an 
 
 In future edits, this might become a feature but for now, sorry!
 
+### examples/
+Contains runnable python scripts that require no input. Change any variables for your specific use case, and run! Ensure that the virtual environment is active.
+
 ### scripts/py_scripts
 Contains runnable python files that can be run using CLI. Requires flag inputs.
 
@@ -22,7 +25,9 @@ Follow these steps to set up your Python environment for working with a specific
 python3 -m venv venv
 
 # Activate virtual environment
-source venv/bin/activate
+source venv/bin/activate # for unix machines
+# OR
+source venv\\Scripts\\activate # for windows
 
 # Install requirements
 pip install -r requirements.txt
@@ -42,3 +47,5 @@ deactivate
 # or go on to run scripts.
 
 ```
+
+

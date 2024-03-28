@@ -19,13 +19,39 @@ Description:
         path to the top level directory of your dataset
         in the visual below, I would pass the pat to "input_dir"
         
-        input_dir/
+        data_input_dir/
             ├── images/
             │   ├── file1.jpg
-            │   └── file2.jpg
+            │   ├── file2.jpg
+            │   ├── file3.jpg
+            │   └── file4.jpg
             └── labels/
                 ├── file1.txt
-                └── file2.txt
+                ├── file2.txt
+                ├── file3.txt
+                └── file4.txt
+
+        data_output_dir/
+            ├── train/
+            |   ├── images/
+            |   |   ├── file1.jpg
+            |   │   └── file2.jpg
+            |   └── labels/
+            |       ├── file1.txt
+            |       └── file2.txt
+            └── test/
+                ├── images/
+                |   ├── file3.jpg
+                │   └── file4.jpg
+                └── labels/
+                    ├── file3.txt
+                    └── file4.txt
+
+    class_dict:
+        a python dictionary containing {int:"class_label"} pairs
+        the ints must start from 0 and each label should be unique
+        a dict can be passed in or set in the constants file
+
 '''
 
 

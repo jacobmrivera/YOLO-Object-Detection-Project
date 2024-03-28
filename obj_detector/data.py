@@ -13,9 +13,6 @@ import cv2
 from . import constants
 
 
-SUPPORTED_EXTENSIONS = ['.jpg', '.jpeg', '.png']
-
-
 class DataMaster():
     """
     Class to handle all(most) data related operations. 
@@ -42,22 +39,26 @@ class DataMaster():
     list_files_in_directory(self, directory_path, ending:str=None) -> list[str]
         Returns a list all files with a certain ending in the dir directory_path in lexographical order
 
-    list_files_in_directory(self, directory_path:str|Path, ending:str=None) -> list[str]
+    generate_mirror_vars(self, put_back:bool = True) -> None
+        Generates image and text image variations by mirroring across the x, y, and xy axis
+    
+    mirror_image_x(self, input_image_path, output_image_path) -> None
+        Mirrors and saves an image across the x axis
 
+    mirror_image_y(input_image_path, output_image_path) -> None
+        Mirros and saves an image across the y axis
 
-    generate_mirror_vars(self, put_back:bool = True)
+    mirror_image_xy(input_image_path, output_image_path) -> None
+        Mirros and saves an image across the x and y axis
 
-    mirror_image_x(self, input_image_path, output_image_path)
+    mirror_bounding_box_x_axis(bb_array) -> list[float]
+        Returns an array containing bounding box information mirrored over x axis
+    
+    mirror_bounding_box_y_axis(bb_array) -> list[float]
+        Returns an array containing bounding box information mirrored over y axis
 
-    mirror_image_y(input_image_path, output_image_path)
-
-    mirror_image_xy(input_image_path, output_image_path)
-
-    mirror_bounding_box_x_axis(bb_array)
-
-    mirror_bounding_box_y_axis(bb_array)
-
-    mirror_bounding_box_xy(bb_array)
+    mirror_bounding_box_xy(bb_array) -> list[float]
+        Returns an array containing bounding box information mirrored over x and y axis
 
     process_text_file(self, input_file, output_file, direction)
 
@@ -91,7 +92,7 @@ class DataMaster():
         # Initialize an empty list to store image file paths
         images = []
             # Loop through supported extensions and gather image files
-        for ext in SUPPORTED_EXTENSIONS:
+        for ext in constants.SUPPORTED_EXTENSIONS:
             images.extend(sorted((self.dataset_path / 'images').rglob(f"*{ext}")))
 
         # save_path = Path(self.dataset_path / f'{datetime.date.today().isoformat()}_Split-data')
@@ -231,7 +232,7 @@ class DataMaster():
     # Mirrors images across the x axis -- vertically    u 
     #                                                  ---
     #                                                   n 
-    def mirror_image_x(self, input_image_path, output_image_path):
+    def mirror_image_x(self, input_image_path, output_image_path) -> None:
         try:
             # Open the image file
             with Image.open(input_image_path) as img:
@@ -251,7 +252,7 @@ class DataMaster():
             print("Unable to load image")
 
     # Mirrors an image across the y axis -- vertically  <- | ->
-    def mirror_image_y(input_image_path, output_image_path):
+    def mirror_image_y(input_image_path, output_image_path) -> None:
         try:
             # Open the image file
             with Image.open(input_image_path) as img:
@@ -271,7 +272,7 @@ class DataMaster():
             print("Unable to load image")
 
     # Mirrors an image across the y and x axis 
-    def mirror_image_xy(input_image_path, output_image_path):
+    def mirror_image_xy(input_image_path, output_image_path) -> None:
         try:
             # Open the image file
             with Image.open(input_image_path) as img:
@@ -289,15 +290,15 @@ class DataMaster():
             print("Unable to load image")
 
     # Mirror bounding box values array across x axis 
-    def mirror_bounding_box_x_axis(bb_array):
+    def mirror_bounding_box_x_axis(bb_array) -> list[float]:
         return [bb_array[0], 1 - bb_array[1], bb_array[2], bb_array[3]]
     
     # Mirror bounding box values array across y axis 
-    def mirror_bounding_box_y_axis(bb_array):
+    def mirror_bounding_box_y_axis(bb_array) -> list[float]:
         return [1 - bb_array[0], bb_array[1], bb_array[2], bb_array[3]]
 
     # Mirror bounding box values array across x and y axis 
-    def mirror_bounding_box_xy(bb_array):
+    def mirror_bounding_box_xy(bb_array) -> list[float]:
         return [1 - bb_array[0], 1 - bb_array[1], bb_array[2], bb_array[3]]
 
 
@@ -488,7 +489,7 @@ class DataMaster():
             with open(out_path, 'w') as file:
                 for image in file_name_list:
                     # if not an image, skip
-                    if image[-4:] in SUPPORTED_EXTENSIONS: continue
+                    if image[-4:] in constants.SUPPORTED_EXTENSIONS: continue
 
                     blurry_lvl = self.get_blur_level( os.path.join(input_dir, image))
                     if blurry_lvl < threshold: blurry_count += 1

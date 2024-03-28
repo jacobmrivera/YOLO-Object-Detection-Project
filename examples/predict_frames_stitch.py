@@ -1,7 +1,11 @@
+
+
+
 from obj_detector.predictor import PredictorModel  # Importing the PredictorModel class from your predictor module
 from obj_detector.data import DataMaster
 from pathlib import Path
 import os
+import obj_detector.util as util
 
 '''
 Created by Jacob Rivera
@@ -11,6 +15,7 @@ Last edit: 03/28/2024
 
 Description:
     Predict objects in a directory of images (or frames from a video)
+        and stitches them into a video
 
     There are many flags that can be passed into the predict_frames() func,
     all of them besides the img have defaults.
@@ -51,9 +56,8 @@ model_path = Path("All_Data_Trainings\\all_data_2_14_mirrored_v8m\\weights\\best
 frames_path = Path("C:\\Users\\multimaster\\Desktop\\dynamic_vids_to_predict\\frames") # will be different
 output_path = Path("C:\\Users\\multimaster\\Desktop\\dynamic_vids_to_predict")
 
-output_video_name = "stitched.mp4"
 smooth_annotations = True
-draw_frames = False
+output_video_name = "stitched.mp4"
 
 
 def main():
@@ -69,16 +73,19 @@ def main():
     os.makedirs(labels_path, exist_ok=True)
     os.makedirs(pred_frames_path, exist_ok=True)
 
+
     predictor.predict_frames(frames_dir=frames_path, annot_output_path=labels_path, drawn_frame_output_path=pred_frames_path)
 
     # smooth the annotations
-    if smooth_annotations:
-        dataHandler.smooth_annotations(input_dir=labels_path)
+    dataHandler.smooth_annotations(input_dir=labels_path)
     
     # draw the annotations onto the frames
-    if draw_frames:
+    if smooth_annotations:
         dataHandler.batch_draw_bb(images_dir=frames_path, labels_dir=labels_path, output_dir=pred_frames_path)
-   
+    
+    # stitch the frames into a video
+    util.frames_to_video(pred_frames_path, frames_path.parent.joinpath(output_video_name), fps=30)
+
 
 
 

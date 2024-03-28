@@ -1,10 +1,5 @@
 TODO:
 
--make pipeline to predict, remove duplicates, and smooth.
-- also delete all garbage data on space
-
-
-
 - document
 - make examples for how to run combined
     * I dont like the idea of doing jupyter notebooks, too much set up

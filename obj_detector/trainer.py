@@ -36,3 +36,6 @@ class Trainer():
     def k_fold_train(self, k: int = 5, show_output: bool = True):
         print(f"Beginning {k}-fold training...")
         self.model.kfold_train(k=k, verbose=show_output)
+
+    def tune(self):
+        self.model.tune(data=self.yaml, epochs=30, iterations=300, optimizer='AdamW', plots=False, save=False, val=False)
