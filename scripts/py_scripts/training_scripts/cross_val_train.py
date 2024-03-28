@@ -8,7 +8,7 @@ sys.path.append('..obj_predictor')
 
 from sklearn.model_selection import KFold
 
-import obj_predictor as op
+import obj_detector as op
 # import obj_predictor.data_processing.train_test_split_frames as tts
 
 # from obj_predictor.training import train

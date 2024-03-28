@@ -5,7 +5,7 @@ from data_preprocessing import train_test_split_frames
 
 from ultralytics.models.yolo.detect import DetectionTrainer
 from ultralytics import settings
-from obj_predictor.predicting import predicting_videos
+from obj_detector.predicting import predicting_videos
 
 json_path = "pipeline\\config.json"
 

@@ -2,8 +2,8 @@
 
 import json
 import argparse
-import obj_predictor.data_processing.mirror as gen_img_vars
-import obj_predictor.data_processing.smooth as smooth
+import obj_detector.data_processing.mirror as gen_img_vars
+import obj_detector.data_processing.smooth as smooth
 import os
 from tqdm import tqdm
 

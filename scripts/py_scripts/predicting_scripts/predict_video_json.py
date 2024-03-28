@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import json
 import argparse
-import obj_predictor.predicting.predicting_videos as predicting_videos
+import obj_detector.predicting.predicting_videos as predicting_videos
 
 '''
 Created by Jacob Rivera

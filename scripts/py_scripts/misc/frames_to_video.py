@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import obj_predictor as op
+import obj_detector as op
 
 '''
 Created by Jacob Rivera

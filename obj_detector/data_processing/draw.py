@@ -1,6 +1,6 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
-import obj_predictor.data_processing.smooth as smooth
+import obj_detector.data_processing.smooth as smooth
 from ultralytics import YOLO
 import cv2
 '''

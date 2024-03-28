@@ -6,7 +6,36 @@ SEED = 32
 
 SUPPORTED_EXTENSIONS = ['.jpg', '.jpeg', '.png']
 
-CLASSES_DICT = {0, 'kettle'}
+CLASSES_DICT = {
+    0: "kettle",
+    1: "cat",
+    2: "potato",
+    3: "firetruck",
+    4: "bulldozer",
+    5: "car",
+    6: "ostrich",
+    7: "frog",
+    8: "truck",
+    9: "lobster",
+    10: "carrot",
+    11: "colander",
+    12: "motorcycle",
+    13: "cup",
+    14: "dog",
+    15: "elephant",
+    16: "spaceship",
+    17: "pineapple",
+    18: "banana",
+    19: "submarine",
+    20: "boat",
+    21: "cookie",
+    22: "stingray",
+    23: "fork",
+    24: "helicopter",
+    25: "duck",
+    26: "bee",
+    }
+
 RGB_DICT = {
     0: 'rgb(236, 3, 252)',
     1: 'rgb(192, 32, 64)',

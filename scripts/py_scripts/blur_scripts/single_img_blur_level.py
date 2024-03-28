@@ -2,7 +2,7 @@
 
 # Import necessary modules or scripts
 import argparse
-import obj_predictor.data_processing.blur as blur
+import obj_detector.data_processing.blur as blur
 
 def main():
     parser = argparse.ArgumentParser(description="Get the blur value of a single image")

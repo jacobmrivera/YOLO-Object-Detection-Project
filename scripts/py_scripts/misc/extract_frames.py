@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import obj_predictor.data_processing.frame_extractor as frame_extractor
+import obj_detector.data_processing.frame_extractor as frame_extractor
 
 '''
 Created by Jacob Rivera

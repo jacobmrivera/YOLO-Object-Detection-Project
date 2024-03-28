@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import obj_predictor.data_processing.mirror as gen_img_vars
+import obj_detector.data_processing.mirror as gen_img_vars
 
 '''
 Created by Jacob Rivera

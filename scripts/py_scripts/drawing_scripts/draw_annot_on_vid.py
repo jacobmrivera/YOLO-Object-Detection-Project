@@ -5,12 +5,12 @@ import argparse
 
 import sys
 import os
-import obj_predictor as op
+import obj_detector as op
 
 
-import obj_predictor as op
-import obj_predictor.data_processing.smooth as smooth
-import obj_predictor.data_processing.draw as draw
+import obj_detector as op
+import obj_detector.data_processing.smooth as smooth
+import obj_detector.data_processing.draw as draw
 from tqdm import tqdm
 
 '''

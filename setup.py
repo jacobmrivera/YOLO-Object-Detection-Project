@@ -43,6 +43,6 @@ setup(
     author='Jacob Rivera',
     author_email='jakemichaelrivera32@gmail.com',
     url='https://github.com/jacobmrivera/YOLO-Object-Detection-Project',
-    packages=find_packages(include=['obj_predictor', 'obj_predictor.*']),
+    packages=find_packages(include=['obj_detector', 'obj_detector.*']),
     install_requires = REQUIRED,
 )

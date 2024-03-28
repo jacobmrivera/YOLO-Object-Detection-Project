@@ -20,17 +20,22 @@ class PredictorModel:
         return
 
 
-    def predict_image(self, img, annot_output_path:str|Path=None, 
-                       drawn_frame_output_path:str|Path = None, save_yolo_img=False, save_conf=True, normalize_annot=True):
+    def predict_image(self, 
+                      img:Path, 
+                      annot_output_path:Path=Path("."), 
+                      drawn_frame_output_path:Path = Path("."), 
+                      save_yolo_img:bool=False, 
+                      save_conf:bool=True, 
+                      normalize_annot:bool=True):
         if not self.model:
             raise ValueError("Model not set.")
         
         file_extension = img.suffix
         if file_extension not in constants.SUPPORTED_EXTENSIONS:
             return
-        results = self.model(img, conf=constants.DEFAULT_CONF_VAL, save_conf=True, verbose=False)
+        results = self.model(img.str, conf=constants.DEFAULT_CONF_VAL, save_conf=True, verbose=False)
 
-        img_PIL = Image.open(img)
+        img_PIL = Image.open(img.str)
 
         # Get image width and height
         width, height = img_PIL.size
@@ -226,7 +231,7 @@ class PredictorModel:
         all_files = os.listdir(frames_dir)
         # labels_path = video_path.parent / "pred_labels"
         for file in tqdm(all_files, desc="Predicting frames..."):
-            full_path = os.path.join(frames_dir, file)
+            full_path = Path(os.path.join(frames_dir, file))
 
             self.predict_image(full_path, annot_output_path=annot_output_path, drawn_frame_output_path=drawn_frame_output_path, save_yolo_img=save_yolo_img, save_conf=save_conf, normalize_annot=normalize_annot)
 

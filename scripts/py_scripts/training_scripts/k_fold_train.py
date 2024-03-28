@@ -12,7 +12,7 @@ import pandas as pd
 from ultralytics import YOLO
 from sklearn.model_selection import KFold
 
-import obj_predictor as op
+import obj_detector as op
 
 '''
 Created by Jacob Rivera

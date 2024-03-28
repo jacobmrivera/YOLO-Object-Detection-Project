@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import obj_predictor.data_processing.smooth as smooth
+import obj_detector.data_processing.smooth as smooth
 
 '''
 Created by Jacob Rivera

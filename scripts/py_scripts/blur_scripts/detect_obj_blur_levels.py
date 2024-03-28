@@ -18,7 +18,7 @@ and create a text file containing the blur levels of each image in the object le
 
 # Import necessary modules or scripts
 import argparse
-import obj_predictor.data_processing.blur as blur_module
+import obj_detector.data_processing.blur as blur_module
 
 def main():
     parser = argparse.ArgumentParser(description="Get the blur values for each object")

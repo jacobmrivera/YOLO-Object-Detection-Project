@@ -2,7 +2,7 @@
 
 import argparse
 import os
-import obj_predictor as op
+import obj_detector as op
 from tqdm import tqdm
 
 '''

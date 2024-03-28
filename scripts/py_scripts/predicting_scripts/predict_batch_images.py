@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import json
 import argparse
-import obj_predictor.predicting.predict as predict
+import obj_detector.predicting.predict as predict
 import os
 from tqdm import tqdm
 import shutil

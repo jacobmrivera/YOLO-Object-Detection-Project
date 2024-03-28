@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import json
 import argparse
-import obj_predictor.data_processing.make_config
+import obj_detector.data_processing.make_config
 
 '''
 Created by Jacob Rivera
@@ -30,7 +30,7 @@ def main():
     except (FileNotFoundError, json.JSONDecodeError):
         print("Error reading config file.")
 
-    obj_predictor.data_processing.make_config.make_config(json_config)
+    obj_detector.data_processing.make_config.make_config(json_config)
 
     return
 

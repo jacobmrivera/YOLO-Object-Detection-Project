@@ -2,7 +2,7 @@
 
 import os
 import shutil
-from obj_predictor.data_processing import smooth
+from obj_detector.data_processing import smooth
 from tqdm import tqdm
 
 

@@ -2,7 +2,7 @@
 
 # Import necessary modules or scripts
 import argparse
-import obj_predictor as op
+import obj_detector as op
 # import obj_predictor.data_processing.detect_blur as blur_module
 
 def main():
