@@ -38,6 +38,8 @@ This script is more specific to the Developmental Intelligence Lab's structure. 
 
 The output will create one directory for each subject and camera angle. 
 
+#### examples/predict_video.py
+Similar to other prediction scripts, set desired variables and hit go. All default arguements are shown in the script, so the only ones truly necessary are the video_path.
 
 
 ### scripts/py_scripts/ and scripts/sh_scripts/
