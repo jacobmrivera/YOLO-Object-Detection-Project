@@ -34,6 +34,8 @@ Description:
 
             
     ~~~ TO RUN ~~~
+    ensure virtual enviroment is set in IDE and hit run
+    OR
     in a terminal or command prompt, run the following commands from the top level of this project
 
     ! MAC/LINUX

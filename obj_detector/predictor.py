@@ -19,7 +19,7 @@ class PredictorModel:
         self.model = YOLO(model)
         return
 
-
+    
     def predict_image(self, 
         img:Path, 
         annot_output_path:Path=None, 

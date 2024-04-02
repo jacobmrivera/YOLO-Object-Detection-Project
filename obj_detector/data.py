@@ -727,7 +727,7 @@ class DataMaster():
     #   max_skips: number of frames to fill in missing objects
     # output:
     #   none
-    def smooth_annotations(self, input_dir, max_skip=5):
+    def smooth_annotations(self, input_dir, max_skip=constants.MAX_SKIPS):
 
         text_files = self.list_files_in_directory(input_dir, '.txt')
         text_files = [os.path.join(input_dir, j) for j in text_files]

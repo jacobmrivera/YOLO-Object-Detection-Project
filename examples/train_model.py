@@ -6,7 +6,7 @@ from obj_detector.trainer import Trainer  # Importing the PredictorModel class f
 Created by Jacob Rivera
 Spring 2024
 
-Last edit: 03/28/2024
+Last edit: 4/2/2024
 
 Description:
     Train YOLO model from passed aruements
@@ -19,7 +19,7 @@ Description:
         path to the top level directory of your dataset
         in the visual below, I would pass the pat to "input_dir"
         
-        data_input_dir/
+        dataset_path/
             ├── images/
             │   ├── file1.jpg
             │   ├── file2.jpg
@@ -64,7 +64,7 @@ def main():
     args_dict = {
         "model": model_path,
         "epochs": 1000,
-        "device": 0,
+        "device": 0, # set to 'cpu' or delete if no GPU
         "project_name": "All_Data_Trainings",
         "run_name": "run1",
     }

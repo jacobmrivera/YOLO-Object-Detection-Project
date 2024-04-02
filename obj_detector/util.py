@@ -3,6 +3,7 @@ import os
 import shutil
 import obj_detector as op
 from tqdm import tqdm
+import constants
 
 
 # if number of frames to be over 04d, then change the 4 in the f-string to the number of digits
@@ -221,7 +222,7 @@ def split_data_by_blur(source_dir, destination_dir, threshold):
 
 
 
-def frames_to_video(input_dir, output_video_path, fps=30):
+def frames_to_video(input_dir, output_video_path, fps=constants.STITCH_VIDEO_FPS):
     # Get the list of image files in the input directory
     # image_files = [f for f in os.listdir(input_dir) if f.endswith('.png') or f.endswith('.jpg')]
     image_files = op.data_processing.smooth.list_files_in_directory(input_dir, ".jpg")
