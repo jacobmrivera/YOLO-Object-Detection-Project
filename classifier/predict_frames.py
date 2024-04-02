@@ -49,9 +49,12 @@ Description:
 '''
 model_path = Path("first_n\\train3\\weights\\best.pt")
 # frames_path = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\17358\\positive_JA") # will be different
-output_path = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\n_split\\2500_split\\to_test")
 
-base_output_name = "first_2500_"
+
+N = 5000
+output_path = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\n_split\\{N}_split\\to_test")
+
+base_output_name = f"first_{N}_"
 
 # positive_dir = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\child_positive_frames") # will be different
 # postitive_test = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\17358\\positive_JA")
@@ -63,12 +66,12 @@ base_output_name = "first_2500_"
 # negative_train = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\train\\negative_JA")
 
 
-positive_dir = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\n_split\\2500_split\\to_test\\positive_JA") # will be different
+positive_dir = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\n_split\\{N}_split\\to_test\\positive_JA") # will be different
 # postitive_test = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\17358\\positive_JA")
 # postitive_train = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\train\\positive_JA")
 
 
-negative_dir =Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\n_split\\2500_split\\to_test\\negative_JA") # will be different
+negative_dir =Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\n_split\\{N}_split\\to_test\\negative_JA") # will be different
 # negative_test = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\17358\\negative_JA")
 # negative_train = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\train\\negative_JA")
 
