@@ -10,9 +10,9 @@ class Trainer():
         self.args = args
         self.dataset_path = dataset_path
         self.seed = 32
+        self.save_path = split_data_save_path
         self.dataMaster = DataMaster(self.dataset_path, self.seed, class_dict, save_path=self.save_path)
         self.model = DetectionTrainer(overrides=self.args)
-        self.save_path = split_data_save_path
 
     def load_model(self):
         # Ensure the model is in the passed aruements
