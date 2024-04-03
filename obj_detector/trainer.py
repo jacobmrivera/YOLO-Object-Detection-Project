@@ -30,7 +30,7 @@ class Trainer():
         self.load_model()
         
         print("Beginning training...")
-        self.model.train(verbose=show_output)
+        self.model.train()
 
 
     def k_fold_train(self, k: int = 5, show_output: bool = True):
