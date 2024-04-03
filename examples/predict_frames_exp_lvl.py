@@ -37,7 +37,8 @@ def main():
     dataHandler = DataMaster(model_path)
 
     for sub in subject_directories:
-
+        print(sub)
+        input()
         # cam 7
         frames_path = sub / "cam07_frames_p" 
         sub_output = output_path / Path(sub.name + "_cam07_frames_predicted_data")

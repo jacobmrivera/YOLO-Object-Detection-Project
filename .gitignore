@@ -5,7 +5,7 @@ k_fold_training_s
 runs/
 17358_set_aside/
 first_n/
-Mirrored_Images_Training/
+Mirrored_Images_Training/all_image_variants/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

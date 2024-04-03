@@ -5,7 +5,7 @@ DEFAULT_CONF_VAL = 0.8
 SEED = 32
 
 SUPPORTED_EXTENSIONS = ['.jpg', '.jpeg', '.png']
-MAX_SKIP = 5 # number of frames to smooth annotations over
+MAX_SKIPS = 5 # number of frames to smooth annotations over
 
 STITCH_VIDEO_FPS = 30
 

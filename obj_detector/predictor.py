@@ -218,7 +218,7 @@ class PredictorModel:
             elif  boxes.cls[i].item() not in predicted_dict.keys():
                 predicted_dict[boxes.cls[i].item()] = [boxes.cls[i].item(), boxes.xywh[i].tolist(), boxes.conf[i].item()]
             # no else
-
+        print(predicted_dict)
         return predicted_dict
 
     def predict_frames(self, 
