@@ -10,6 +10,55 @@ To come:
 - more examples, especially ones to include the different helper functions that make life easier, like extract frames from a video or detecting blur.
 - Better organization
 
+
+
+
+# Setting Up Your Python Environment
+
+Follow these steps to set up your Python environment for working with a specific module.
+
+
+First, before setting up the virtual environment, we need to ensure that the CUDA Toolkit is installed on your machine (assuming you are to be using a GPU). Download and installation instructions can be found [here](https://developer.nvidia.com/). Make sure to install the correct version of the toolkit for your machine. Do a machine restart to ensure all drivers are active for the GPU. 
+
+
+
+Depending on how you have installed Python, the python command might be different. However you are able to start an interactive Python session on the command line is what you should use in place of <python3> in the commands below. Generally, just <python> will work, however, Windows machines might have it set up to be <py>. You can change this by looking up how to export PATH on your machine.
+
+```bash
+# Navigate to the top level of this project directory
+# Create a virtual environment named 'venv'
+python -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate # for unix machines
+# OR
+source venv\\Scripts\\activate # for windows
+```
+
+
+
+
+```bash
+# Install requirements
+pip install -r requirements.txt
+
+# Install this package for easy usage the -e flag for development mode of the python package,
+# which prevents user from reinstalling it after every change.
+pip install -e .
+
+# If only running scripts, without changing package, run
+pip install .
+
+
+
+# You can deactivate virtual env here by running:
+deactivate
+
+# or go on to run scripts.
+
+```
+
+
 ### examples/
 Contains runnable python scripts that require no input. Change any variables for your specific use case, and run! Ensure that the virtual environment is activated if running on the command line or that your IDE environment has the virtual environment active if running through an editor.
 
@@ -47,39 +96,5 @@ These directories contain scripts that were initially used to develop this proje
 
 There is generally one shell script that calls one of the python scripts. This was to provide a simpler interface to call the python scripts rather than provide command line arguments. If one wishes to run the scripts, please give it your best shot :) 
 
-
-# Setting Up Your Python Environment
-
-Follow these steps to set up your Python environment for working with a specific module.
-
-
-```bash
-# Navigate to the top level of this project directory
-# Create a virtual environment named 'venv'
-python3 -m venv venv
-
-# Activate virtual environment
-source venv/bin/activate # for unix machines
-# OR
-source venv\\Scripts\\activate # for windows
-
-# Install requirements
-pip install -r requirements.txt
-
-# Install this package for easy usage the -e flag for development mode of the python package,
-# which prevents user from reinstalling it after every change.
-pip install -e .
-
-# If only running scripts, without changing package, run
-pip install .
-
-
-
-# You can deactivate virtual env here by running:
-deactivate
-
-# or go on to run scripts.
-
-```
 
 
