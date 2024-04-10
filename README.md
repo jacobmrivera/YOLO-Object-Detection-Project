@@ -35,8 +35,14 @@ source venv/bin/activate # for unix machines
 source venv\\Scripts\\activate # for windows
 ```
 
+Before going on, we now need to install PyTorch. Following this [link](https://pytorch.org/get-started/locally/), install PyTorch. There will be a table where we can choose the specifics for how we want PyTorch installed. Choose the "Stable" PyTorch build, your corresponding OS, "Pi"p package, "Pytho"n Language, "CUDA 11.8" Compute Platform.
 
-
+This combination will provide a command directly below. It will say "Run this Command". Copy that command and paste it into the same terminal/command prompt where you activated the virtual environment. Run the command. If something is to go wrong in the build, it is most likely at this step. If you recieve any CUDA or pytorch related errors at this step, another step, or when running a script, here is what you can do.
+With your Python virtual environment active, run
+```bash
+pip uninstall pytorch torchvision torchaudio
+```
+then go back to the PyTorch website, copy the command, and run it. This will uninstall whatever version of the packages you had and install version compatiable packages.
 
 ```bash
 # Install requirements
@@ -57,6 +63,9 @@ deactivate
 # or go on to run scripts.
 
 ```
+
+After setting up your virtual environment, please check the following file: obj_detector/constants.py
+This file will contain constants that will be used across all scripts. The most important thing to change would be to the CLASS_DICT variable. This is specific to whatever project/objects you want to detect. Many of the constants could be passed in as function variables on various functions to override the default values, but you will need to read the code a bit to see what is possible 🤗
 
 
 ### examples/
