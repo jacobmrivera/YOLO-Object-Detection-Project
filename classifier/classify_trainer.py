@@ -35,15 +35,15 @@ args_dict = {
     "model": 'yolov8s.pt',
     "epochs": 100,
     "device": 0,
-    "project": "17358_set_aside",
+    "project": "obj17",
     "name": "25k"
 }
 
 
 def main():
-    dataset_path = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\n_split\\5000_split\\for_model"
+    dataset_path = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\first_10%_split\\for_model"
     model = YOLO('yolov8s-cls.pt')  # load a pretrained model (recommended for training)
-    results = model.train(data=dataset_path, epochs=50, device=0, project="first_n")
+    results = model.train(data=dataset_path, epochs=50, device=0, project="obj17")
     # torch.cuda.empty_cache()
     # gc.collect()
 

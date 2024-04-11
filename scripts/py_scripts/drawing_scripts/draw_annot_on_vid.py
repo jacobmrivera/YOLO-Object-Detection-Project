@@ -32,16 +32,24 @@ def get_text_file(input_img):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Train YOLO model from passed arguements")
-    parser.add_argument("--images_dir", required=True, help="")
-    parser.add_argument("--labels_dir", required=True, help="")
-    parser.add_argument("--output_dir", required=True, help="")
+    # parser = argparse.ArgumentParser(description="Train YOLO model from passed arguements")
+    # parser.add_argument("--images_dir", required=True, help="")
+    # parser.add_argument("--labels_dir", required=True, help="")
+    # parser.add_argument("--output_dir", required=True, help="")
     
-    args = parser.parse_args()
+    # args = parser.parse_args()
 
-    images_dir = args.images_dir
-    labels_dir = args.labels_dir
-    output_dir = args.output_dir
+    # images_dir = args.images_dir
+    # labels_dir = args.labels_dir
+    # output_dir = args.output_dir
+
+    images_dir = "M:\\experiment_351\\included\\__20221112_10041\\cam07_frames_p"
+    # labels_dir = args.labels_dir
+    # output_dir = args.output_dir
+
+    labels_dir = "C:\\Users\\multimaster\\Desktop\\practice_pipeline\\__20221112_10041_cam07_frames_predicted_data\\pred_copies"
+    output_dir = "C:\\Users\\multimaster\\Desktop\\practice_pipeline\\__20221112_10041_cam07_frames_predicted_data\\not_smoothed_frames"
+
 
     os.makedirs(output_dir, exist_ok=True)
 

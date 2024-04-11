@@ -20,6 +20,6 @@ def copy_files_starting_with_17388(input_dir, output_dir):
 
 # Example usage:
 input_directory = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\child_positive_frames"
-output_directory = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\17358\\positive_JA"
+output_directory = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\positive_JA"
 
 # copy_files_starting_with_17388(input_directory, output_directory)

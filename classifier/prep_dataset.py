@@ -7,9 +7,9 @@ pos_or_neg = "positive"
 
 # Define the directory containing the files
 # directory = f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\child_{pos_or_neg}_frames"
-directory = f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\n_split\\5000_split\\for_model\\{pos_or_neg}_JA"
+directory = f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\first_10%_split\\for_model\\{pos_or_neg}_JA"
 # Define the paths for train and test directories
-output_dataset_dir = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\n_split\\5000_split\\for_model"
+output_dataset_dir = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\first_10%_split\\for_model"
 train_dir = os.path.join(f"{output_dataset_dir}", "train", f"{pos_or_neg}_JA")
 test_dir = os.path.join(f"{output_dataset_dir}", "test", f"{pos_or_neg}_JA")
 

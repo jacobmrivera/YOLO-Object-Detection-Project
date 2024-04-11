@@ -1,3 +1,4 @@
+import re
 import cv2
 from ultralytics import YOLO
 import os
@@ -6,7 +7,7 @@ from tqdm import tqdm
 import torch
 from ultralytics.models.yolo.detect import DetectionTrainer
 from pathlib import Path
-from . import constants
+from obj_detector import constants
 
 REMOVE_DUPLICATE_OBJ_PREDS = True
 
@@ -38,9 +39,9 @@ class PredictorModel:
         file_extension = img.suffix
         if file_extension not in constants.SUPPORTED_EXTENSIONS:
             return
-        results = self.model(img.str, conf=constants.DEFAULT_CONF_VAL, save_conf=True, verbose=False)
+        results = self.model(str(img), conf=constants.DEFAULT_CONF_VAL, save_conf=True, verbose=False)
 
-        img_PIL = Image.open(img.str)
+        img_PIL = Image.open(str(img))
 
         # Get image width and height
         width, height = img_PIL.size
@@ -56,12 +57,12 @@ class PredictorModel:
         # Save the frame as an image
         if save_yolo_img:
             out_img = drawn_frame_output_path / img.split('.')[0] + "_pred.jpg"
-            print(out_img)
+            # print(out_img)
             cv2.imwrite(out_img, annotated_frame)
 
         predicted_bb = self.predictions_to_arr(results)
 
-        text_name =  img.split("\\")[-1].split('.')[0] + ('_pred_c.txt' if save_conf else '_pred.txt')
+        text_name =  str(img).split("\\")[-1].split('.')[0] + ('_pred_c.txt' if save_conf else '_pred.txt')
         output_path = os.path.join(annot_output_path, text_name)
 
         self.predicts_to_txt(predicted_bb, output_path, width, height, save_conf)
@@ -211,14 +212,11 @@ class PredictorModel:
         boxes = results[0].boxes
 
         for i in range(len(boxes.cls)):
-            # if the obj num is already a key in the dict and has a greater confidence score, replace 
-            if boxes.cls[i].item() in predicted_dict.keys() and boxes.conf[i].item() >  predicted_dict[boxes.cls[i].item()][2]:
+            if boxes.cls[i].item() in predicted_dict.keys():
+                predicted_dict[boxes.cls[i].item()] = [boxes.cls[i].item(), boxes.xywh[i].tolist(), boxes.conf[i].item()] if boxes.conf[i].item() > predicted_dict[boxes.cls[i].item()][2] else predicted_dict[boxes.cls[i].item()]
+            else:
                 predicted_dict[boxes.cls[i].item()] = [boxes.cls[i].item(), boxes.xywh[i].tolist(), boxes.conf[i].item()]
-            # if the obj is not in the dictionary, just add it
-            elif  boxes.cls[i].item() not in predicted_dict.keys():
-                predicted_dict[boxes.cls[i].item()] = [boxes.cls[i].item(), boxes.xywh[i].tolist(), boxes.conf[i].item()]
-            # no else
-        print(predicted_dict)
+
         return predicted_dict
 
     def predict_frames(self, 
@@ -233,11 +231,43 @@ class PredictorModel:
         given a directory, provide annootations for each frame in an output dir
         
         '''
-        all_files = os.listdir(frames_dir)
+        all_frames = self.list_files_in_directory(frames_dir, ".jpg")
         # labels_path = video_path.parent / "pred_labels"
-        for file in tqdm(all_files, desc="Predicting frames..."):
+        for file in tqdm(all_frames, desc="Predicting frames"):
             full_path = Path(os.path.join(frames_dir, file))
 
             self.predict_image(full_path, annot_output_path=annot_output_path, drawn_frame_output_path=drawn_frame_output_path, save_yolo_img=save_yolo_img, save_conf=save_conf, normalize_annot=normalize_annot)
-
+            # print("~~~"*10)
         return
+    
+
+        # Sorting function to handle file names with integers
+    # without, sorts like 1, 10, 100, 1000, 1001
+    def __natural_sort_key(self, filename):
+        # Split the filename into parts of digits and non-digits
+        parts = [int(part) if part.isdigit() else part for part in re.split(r'(\d+)', filename)]
+        return parts
+
+
+    # Returns a list of all files with a particular ending from a dir
+    def list_files_in_directory(self, directory_path:str|Path, ending:str=None) -> list[str]:
+        try:
+            # Get all files in the directory
+            files = os.listdir(directory_path)
+
+            if ending:
+                # Filter the list to include only text files (files with a ".txt" extension)
+                files_list = [file for file in files if file.lower().endswith(ending)]
+            else:
+                files_list = [file for file in files if file.lower()]
+
+            # Sort the list of files alphabetically
+            sorted_files = sorted(files_list, key=self.__natural_sort_key)
+
+            for i in range(len(sorted_files)):
+                sorted_files[i] = os.path.join(directory_path, sorted_files[i])
+            return sorted_files
+
+        except OSError as e:
+            print(f"Error: {e}")
+            return []

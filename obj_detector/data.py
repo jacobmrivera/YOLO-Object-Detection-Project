@@ -81,8 +81,7 @@ class DataMaster():
         self.save_path = save_path if save_path is not None else Path(self.dataset_path / f'{datetime.date.today().isoformat()}_Training-data')
 
         # Set a seed for reproducibility
-        random.seed(constants.SEED)
-
+        random.seed(constants.SEED) 
 
 
     def split_data_pipe(self, split=constants.DEFUALT_DATA_SPLIT):
@@ -515,6 +514,7 @@ class DataMaster():
     Generates and returns blur value for a single image
     '''
     ### NOT TESTED ###
+    @staticmethod
     def get_blur_level(image_path):
         img = cv2.imread(image_path)
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -712,14 +712,19 @@ class DataMaster():
                 # when it is, get the missing points
                 if i in d.keys() and missed == 1:
                     avg_annot = self.get_equidistant_points(curr_dict[i], d[i], count + 1, sig_figs=5)
+                    # print(f"annotation num: {len(avg_annot)}")
+                    # print(f"count : {count}")
+                    # print(f"index : {index}")
+
                     # add extrapolated points to files missing it
                     for fix in range(index):
                         self.add_line_to_txt(next_files[fix], i, avg_annot[fix])
                     missed = 0
-                    continue
+                    break
                 elif (i not in d.keys() ):
                     missed = 1
-
+                elif i in d.keys() and missed == 0:
+                    break
                 index += 1
 
     # input: 
@@ -753,7 +758,6 @@ class DataMaster():
                 # Process each line as needed
                 line = line.strip()
                 line_arr = re.split(r'\s+', line)
-
                 output_dict[int(line_arr[0])] = [float(item) for item in line_arr[1:]]
         return output_dict 
 

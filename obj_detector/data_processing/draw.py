@@ -111,7 +111,7 @@ def draw_bounding_boxes(input_file, output_dir=''):
 
 
 def draw_single_frame(frame, labels_file, drawn_frame, save_drawn_frame=False):
-
+    labels_file = labels_file.split(".")[0] + "_pred_c.txt"
     with open(labels_file, 'r') as file:
         lines = file.readlines()
 
