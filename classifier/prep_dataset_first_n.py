@@ -47,8 +47,8 @@ subs = ['18796', '17608', '18419', '16963', '19954', '17848', '17757', '18431', 
 '18100', '18459', '17933', '17402', '17592', '17919', '17565', '19357', '19536']
 
 def get_list_subs(input_dir, which_class, output_dir):
-    for_output_dir = Path(f"{output_dir}\\first_{first_percent}_split\\for_model\\{which_class}_JA")
-    to_output_dir = Path(f"{output_dir}\\first_{first_percent}_split\\for_testing\\{which_class}_JA")
+    for_output_dir = Path(f"{output_dir}\\first_{first_percent}_split\\for_training\\{which_class}_JA")
+    to_output_dir = Path(f"{output_dir}\\first_{first_percent}_split\\for_validation\\{which_class}_JA")
 
     files = list_files_in_directory(input_dir)
     os.makedirs(for_output_dir, exist_ok=True)
@@ -80,7 +80,6 @@ def get_list_subs(input_dir, which_class, output_dir):
                 shutil.copy(file_name, dst)
 
 
-output_dir = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data"
-get_list_subs(Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\negative_JA"), "negative", output_dir)
-
-get_list_subs(Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\positive_JA"), "positive", output_dir)
+output_dir = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data"
+get_list_subs(Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data\\negative_JA"), "negative", output_dir)
+get_list_subs(Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data\\positive_JA"), "positive", output_dir)

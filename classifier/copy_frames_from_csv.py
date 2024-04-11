@@ -39,23 +39,50 @@ def copy_images_from_csv(csv_file, destination_path):
 
 def main():
 
-    num = 17
+    # num = 17
+    # pos_or_neg = "positive"
+    # # Example usage:
+    # csv_file = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\{pos_or_neg}_JA_obj_{num}.csv")  # Path to your CSV file
+    # destination_folder = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\{pos_or_neg}_JA")  # Specify the destination folder
+    # os.makedirs(destination_folder, exist_ok=True)
+    
+    # copy_images_from_csv(csv_file, destination_folder)
+
+    # pos_or_neg = "negative"
+    # # Example usage:
+    # csv_file = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\{pos_or_neg}_JA_obj_{num}.csv")  # Path to your CSV file
+    # destination_folder = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\{pos_or_neg}_JA")  # Specify the destination folder
+    # os.makedirs(destination_folder, exist_ok=True)
+    
+    # copy_images_from_csv(csv_file, destination_folder)
+
+    num1 = 17
+    num2 = 15
     pos_or_neg = "positive"
     # Example usage:
-    csv_file = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\{pos_or_neg}_JA_obj_{num}.csv")  # Path to your CSV file
-    destination_folder = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\{pos_or_neg}_JA")  # Specify the destination folder
+    csv_file = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_{num1}_{num2}_split_data\\{pos_or_neg}_JA_obj_{num1}.csv")  # Path to your CSV file
+    destination_folder = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_{num1}_{num2}_split_data\\{pos_or_neg}_JA_{num1}")  # Specify the destination folder
     os.makedirs(destination_folder, exist_ok=True)
     
     copy_images_from_csv(csv_file, destination_folder)
+
+
+    # Example usage:
+    csv_file = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_{num1}_{num2}_split_data\\{pos_or_neg}_JA_obj_{num2}.csv")  # Path to your CSV file
+    destination_folder = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_{num1}_{num2}_split_data\\{pos_or_neg}_JA_{num2}")  # Specify the destination folder
+    os.makedirs(destination_folder, exist_ok=True)
+    
+    copy_images_from_csv(csv_file, destination_folder)
+
+
 
     pos_or_neg = "negative"
     # Example usage:
-    csv_file = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\{pos_or_neg}_JA_obj_{num}.csv")  # Path to your CSV file
-    destination_folder = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\{pos_or_neg}_JA")  # Specify the destination folder
+    csv_file = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_{num1}_{num2}_split_data\\{pos_or_neg}_JA_obj_{num1}_{num2}.csv")  # Path to your CSV file
+    destination_folder = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_{num1}_{num2}_split_data\\{pos_or_neg}_JA_{num1}_{num2}")  # Specify the destination folder
     os.makedirs(destination_folder, exist_ok=True)
     
     copy_images_from_csv(csv_file, destination_folder)
-
 
 if __name__ == "__main__":
     main()

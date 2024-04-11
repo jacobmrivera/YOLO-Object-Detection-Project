@@ -12,28 +12,6 @@ Last edit: 03/28/2024
 Description:
     Predict objects in a directory of images (or frames from a video)
 
-    There are many flags that can be passed into the predict_frames() func,
-    all of them besides the img have defaults.
-
-    Set the flags to achieve the desired output.
-
-    model_path:
-        path to .pt file to predict with
-
-    frames_path:
-        path to directory containing all images/frames to predict objects in
-
-    drawn_frame_output_dir:
-        if saving the yolo drawn image (yolo puts the bounding boxes for us)
-        then provide a path to a directory for the output image, otherwise the output name
-            will be saved in the same location of the input img
-
-    annot_output_dir:
-        output directory to place annotation text file containing prediction bounding box info
-        if no directory is provided, then the .txt file will be placed in the same dir
-            as the input imgage
-
-    ~~~ TO RUN ~~~
     in a terminal or command prompt, run the following commands from the top level of this project
 
     ! MAC/LINUX
@@ -47,41 +25,21 @@ Description:
     deactivate
     ~~~~~~~~~~~~~~
 '''
-model_path = Path("obj17\\train\\weights\\best.pt")
+model_path = Path("obj17\\train2\\weights\\best.pt")
 # frames_path = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\17358\\positive_JA") # will be different
 
 
 N = "10%"
-output_path = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data")
+# "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\first_10%_split\\for_testing"
+output_path = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\first_10%_split\\for_validating")
 
 base_output_name = f"first_{N}_"
 
-# positive_dir = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\child_positive_frames") # will be different
-# postitive_test = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\17358\\positive_JA")
-# postitive_train = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\train\\positive_JA")
+positive_dir = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\first_10%_split\\for_validating\\positive_JA") # will be different
 
+negative_dir = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\first_10%_split\\for_validating\\negative_JA") # will be different
 
-# negative_dir = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\child_negative_frames") # will be different
-# negative_test = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\17358\\negative_JA")
-# negative_train = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\train\\negative_JA")
-
-
-positive_dir = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\positive_JA") # will be different
-# positive_dir = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\first_{N}_split\\for_testing\\positive_JA") # will be different
-
-# postitive_test = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\17358\\positive_JA")
-# postitive_train = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\train\\positive_JA")
-
-
-# negative_dir = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\first_{N}_split\\for_testing\\negative_JA") # will be different
-negative_dir = Path(f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\negative_JA") # will be different
-
-# negative_test = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\17358\\negative_JA")
-# negative_train = Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\train\\negative_JA")
-# "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\negative_JA"
-
-
-num_to_pred = 50_000
+num_to_pred = 10_000
 
 def main():
     model = YOLO(model_path)  # load a custom model
@@ -113,13 +71,9 @@ def main():
                 file.write(f"{img}: {0} | {results[0].probs.top1conf.item()}\n")
                 pos_incorrect_cnt += 1
 
-            print(pos_correct_cnt + pos_incorrect_cnt)
+            print(f"{pos_correct_cnt + pos_incorrect_cnt} / {len(positive_to_eval)}")
 
-
-    # all_negative_frames = os.listdir(negative_dir)
-    # negative_trained = os.listdir(negative_train) + os.listdir(negative_test)
-    
-    # negative_to_eval = list(set(all_negative_frames) - set(negative_trained))
+#####################################################
     negative_to_eval = os.listdir(negative_dir)
     random.shuffle(negative_to_eval)
 
@@ -139,7 +93,8 @@ def main():
                 file.write(f"{img}: {0} | {results[0].probs.top1conf.item()}\n")
                 neg_incorrect_cnt += 1
 
-            print(neg_correct_cnt + neg_incorrect_cnt)
+            print(f"{neg_correct_cnt + neg_incorrect_cnt} / {len(negative_to_eval)}")
+
 
 
     with open(f'{output_path}\\{base_output_name}summary.txt', 'w') as file:
