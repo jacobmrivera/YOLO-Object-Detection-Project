@@ -41,23 +41,12 @@ args_dict = {
 
 
 def main():
-    dataset_path = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_split_data\\first_10%_split\\for_model"
+    dataset_path = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data\\first_25%_split\\for_training"
     model = YOLO('yolov8s-cls.pt')  # load a pretrained model (recommended for training)
-    results = model.train(data=dataset_path, epochs=50, device=0, project="obj17")
+    results = model.train(data=dataset_path, epochs=50, device=0, project="obj17_15", name="25%")
     # torch.cuda.empty_cache()
     # gc.collect()
 
-    # dataset_path = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\50k"
-    # model = YOLO('yolov8s-cls.pt')  # load a pretrained model (recommended for training)
-    # results = model.train(data=dataset_path, epochs=100, device=0, project="17358_set_aside")
-    # torch.cuda.empty_cache()
-    # gc.collect()
-
-    # dataset_path = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\exp12_child_datasets\\17358_set_aside\\100k"
-    # model = YOLO('yolov8s-cls.pt')  # load a pretrained model (recommended for training)
-    # results = model.train(data=dataset_path, epochs=100, device=0, project="17358_set_aside")
-    # torch.cuda.empty_cache()
-    # gc.collect()
 
 
 if __name__ == '__main__':

@@ -37,7 +37,7 @@ def list_files_in_directory(directory_path:str|Path, ending:str=None) -> list[st
         print(f"Error: {e}")
         return []
 
-fraction = 0.1
+fraction = 0.25
 
 first_percent = f"{int(fraction*100)}%"
 
@@ -47,8 +47,8 @@ subs = ['18796', '17608', '18419', '16963', '19954', '17848', '17757', '18431', 
 '18100', '18459', '17933', '17402', '17592', '17919', '17565', '19357', '19536']
 
 def get_list_subs(input_dir, which_class, output_dir):
-    for_output_dir = Path(f"{output_dir}\\first_{first_percent}_split\\for_training\\{which_class}_JA")
-    to_output_dir = Path(f"{output_dir}\\first_{first_percent}_split\\for_validation\\{which_class}_JA")
+    for_output_dir = Path(f"{output_dir}\\first_{first_percent}_split\\for_training\\{which_class}")
+    to_output_dir = Path(f"{output_dir}\\first_{first_percent}_split\\for_validating\\{which_class}")
 
     files = list_files_in_directory(input_dir)
     os.makedirs(for_output_dir, exist_ok=True)
@@ -81,5 +81,6 @@ def get_list_subs(input_dir, which_class, output_dir):
 
 
 output_dir = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data"
-get_list_subs(Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data\\negative_JA"), "negative", output_dir)
-get_list_subs(Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data\\positive_JA"), "positive", output_dir)
+get_list_subs(Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data\\positive_JA_15"), "positive_JA_15", output_dir)
+get_list_subs(Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data\\positive_JA_17"), "positive_JA_17", output_dir)
+get_list_subs(Path("C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data\\negative_JA_17_15"), "negative_JA_17_15", output_dir)
