@@ -39,11 +39,12 @@ args_dict = {
     "name": "25k"
 }
 
+N = 500
 
 def main():
-    dataset_path = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data\\first_25%_split\\for_training"
+    dataset_path = f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\newer_csvs\\exp12_JA_obj17_data_child-view\\first_{N}_split\\training_split"
     model = YOLO('yolov8s-cls.pt')  # load a pretrained model (recommended for training)
-    results = model.train(data=dataset_path, epochs=50, device=0, project="obj17_15", name="25%")
+    results = model.train(data=dataset_path, epochs=50, device=0, project="obj17", name=f"first_{N}")
     # torch.cuda.empty_cache()
     # gc.collect()
 

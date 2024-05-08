@@ -3,15 +3,16 @@ import random
 import shutil
 from tqdm import tqdm
 
-class_name = "positive_JA_17"
-class_name = "positive_JA_15"
-class_name = "negative_JA_17_15"
+class_name = "positive_JA"
+class_name = "negative_JA"
+# class_name = "negative_JA_17_15"
 
+split_n = 500
 # Define the directory containing the files
 # directory = f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\child_{pos_or_neg}_frames"
-directory = f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data\\first_25%_split\\for_training\\{class_name}"
+directory = f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\newer_csvs\\exp12_JA_obj17_data_child-view\\first_{split_n}_split\\training_split\\{class_name}"
 # Define the paths for train and test directories
-output_dataset_dir = "C:\\Users\\multimaster\\Desktop\\JA_DATASET\\csvs\\JA_child-view\\exp12_obj_17_15_split_data\\first_25%_split\\for_training"
+output_dataset_dir = f"C:\\Users\\multimaster\\Desktop\\JA_DATASET\\newer_csvs\\exp12_JA_obj17_data_child-view\\first_{split_n}_split\\training_split"
 train_dir = os.path.join(f"{output_dataset_dir}", "train", f"{class_name}")
 test_dir = os.path.join(f"{output_dataset_dir}", "test", f"{class_name}")
 
