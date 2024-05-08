@@ -35,7 +35,7 @@ source venv/bin/activate # for unix machines
 source venv\\Scripts\\activate # for windows
 ```
 
-Before going on, we now need to install PyTorch. Following this [link](https://pytorch.org/get-started/locally/), install PyTorch. There will be a table where we can choose the specifics for how we want PyTorch installed. Choose the "Stable" PyTorch build, your corresponding OS, "Pi"p package, "Pytho"n Language, "CUDA 11.8" Compute Platform.
+Before going on, we now need to install PyTorch. Following this [link](https://pytorch.org/get-started/locally/), install PyTorch. There will be a table where we can choose the specifics for how we want PyTorch installed. Choose the "Stable" PyTorch build, your corresponding OS, "Pip" package, "Python" Language, "CUDA 11.8" Compute Platform.
 
 This combination will provide a command directly below. It will say "Run this Command". Copy that command and paste it into the same terminal/command prompt where you activated the virtual environment. Run the command. If something is to go wrong in the build, it is most likely at this step. If you recieve any CUDA or pytorch related errors at this step, another step, or when running a script, here is what you can do.
 With your Python virtual environment active, run
@@ -74,7 +74,7 @@ Contains runnable python scripts that require no input. Change any variables for
 #### examples/train_model.py
 This script will train a YOLO object detection model from a baseline, pretrained model. YOLO documentation can provide details on the different size models they use, but it seems that the small model (yolov8s.pt) tends to have the best balance between performance and training time for the amount of data and processing power we currently have.
 
-For a specific use case, please be sure to update the constants.py file in the obj_detector/ directory to set desired values, otherwise defaults will be used. Explore constants.py or the code to see what defaults will be implemented. The train_model.py itself has more details about arguements. Any additional training arguements can be included in the dictionary that is passed to the train function.
+For a specific use case, please be sure to update the constants.py file in the obj_detector/ directory to set desired values, otherwise defaults will be used. Explore constants.py or the code to see what defaults will be implemented. The train_model.py itself has more details about arguments. Any additional training arguments can be included in the dictionary that is passed to the train function.
 
 #### examples/predict_image.py
 This script will predict a single image and output a text file containing the bounding box information, including the confidence score. 
@@ -84,7 +84,7 @@ There are many flags and optionals that can be provided, however the only absolu
 #### examples/predict_frames.py
 This script is the same as predict_image.py except it will predict every image in a directory. As the file name suggests, it is useful to predict over all the frames of a video, granted the frames of the video are in the passed directory.
 
-Again, there are many flags and defaults. The only necessary arguements to the predict_frames() function are the model_path and frames_path. All other variables have defaults. 
+Again, there are many flags and defaults. The only necessary arguments to the predict_frames() function are the model_path and frames_path. All other variables have defaults. 
 
 There are also flags that will smooth the annotations up to a constant set in contants.py, in which the bounding box predictions per object will be linearly interpolated across n frames. If you would like to have the predicted bounding boxes drawn onto the frames, then set the draw_frames boolean to True.
 

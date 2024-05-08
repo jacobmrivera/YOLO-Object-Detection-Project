@@ -28,12 +28,9 @@ Maybe need to add errors
 Need to have directions for mac vs windows on set up
 
 
+put names on predicted boxes
 
 
-
-
-
-balanced positive and negative
 
 
 

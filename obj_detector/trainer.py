@@ -18,7 +18,7 @@ class Trainer():
         # Ensure the model is in the passed aruements
         self.args["model"] =  self.model_path
         self.model = DetectionTrainer(overrides=self.args)
-        return     
+        return
 
     def get_yaml(self):
         self.yaml = self.dataMaster.yaml
@@ -28,7 +28,7 @@ class Trainer():
         self.save_path = self.dataMaster.split_data_pipe()
         self.get_yaml()
         self.load_model()
-        
+
         print("Beginning training...")
         self.model.train()
 
