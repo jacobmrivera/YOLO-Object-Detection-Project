@@ -1,11 +1,7 @@
-
-
-
 from obj_detector.predictor import PredictorModel  # Importing the PredictorModel class from your predictor module
 from obj_detector.data import DataMaster
 from pathlib import Path
 import os
-import obj_detector.util as util
 
 '''
 Created by Jacob Rivera
@@ -15,7 +11,6 @@ Last edit: 03/28/2024
 
 Description:
     Predict objects in a directory of images (or frames from a video)
-        and stitches them into a video
 
     There are many flags that can be passed into the predict_frames() func,
     all of them besides the img have defaults.
@@ -52,12 +47,19 @@ Description:
     deactivate
     ~~~~~~~~~~~~~~
 '''
-model_path = Path("All_Data_Trainings\\all_data_2_14_mirrored_v8m\\weights\\best.pt")
-frames_path = Path("C:\\Users\\multimaster\\Desktop\\dynamic_vids_to_predict\\frames") # will be different
-output_path = Path("C:\\Users\\multimaster\\Desktop\\dynamic_vids_to_predict")
+model_path = Path("data\\trained_models\\all_data_2_14_mirrored_v8m\weights\\best.pt")
+frames_path = Path("M:\\experiment_351\\included\\__20240127_10075\\cam07_frames_p") # will be different
 
+agent = "child"
+output_root =  Path(f'M:\\experiment_351\\included\\__20240127_10075\\supporting_files')
+output_video_path = output_root.joinpath(f"bbox_video_{agent}")
+output_annot_path = output_root.joinpath(f"bbox_annotations_{agent}")
+
+
+# output_video_name = "stitched.mp4"
 smooth_annotations = True
-output_video_name = "stitched.mp4"
+draw_frames = True
+save_individual_drawn_frames = False
 
 
 def main():
@@ -66,26 +68,21 @@ def main():
     # instantiate datamaster class
     dataHandler = DataMaster(model_path)
 
-    # set up the labels and output paths
-    labels_path = output_path / "pred_labels"
-    pred_frames_path = output_path /  "pred_frames"
+    os.makedirs(output_video_path, exist_ok=True)
+    os.makedirs(output_annot_path, exist_ok=True)
 
-    os.makedirs(labels_path, exist_ok=True)
-    os.makedirs(pred_frames_path, exist_ok=True)
+    kid_ID = frames_path.parts[-2]
 
-
-    predictor.predict_frames(frames_dir=frames_path, annot_output_path=labels_path, drawn_frame_output_path=pred_frames_path)
+    predictor.predict_frames(frames_dir=frames_path, annot_output_path=output_annot_path, drawn_frame_output_path=output_video_path)
 
     # smooth the annotations
-    dataHandler.smooth_annotations(input_dir=labels_path)
+    if smooth_annotations:
+        dataHandler.smooth_annotations(input_dir=output_annot_path)
     
     # draw the annotations onto the frames
-    if smooth_annotations:
-        dataHandler.batch_draw_bb(images_dir=frames_path, labels_dir=labels_path, output_dir=pred_frames_path)
-    
-    # stitch the frames into a video
-    util.frames_to_video(pred_frames_path, frames_path.parent.joinpath(output_video_name), fps=30)
-
+    if draw_frames:
+        dataHandler.batch_draw_bb(images_dir=frames_path, labels_dir=output_annot_path, output_dir=output_video_path, kid_ID=kid_ID,save_frames=save_individual_drawn_frames)
+   
 
 
 

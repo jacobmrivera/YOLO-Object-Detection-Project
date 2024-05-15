@@ -4,6 +4,7 @@ import re
 import shutil
 from pathlib import Path
 import datetime
+import numpy as np
 from tqdm import tqdm
 import yaml
 from PIL import Image, ImageOps, ImageDraw, ImageFont
@@ -84,7 +85,7 @@ class DataMaster():
         random.seed(constants.SEED) 
 
 
-    def split_data_pipe(self, split=constants.DEFUALT_DATA_SPLIT):
+    def split_data_pipe(self, data_split=False, split=constants.DEFUALT_DATA_SPLIT):
 
         labels = sorted(self.dataset_path.rglob("*labels/*.txt")) # all data in 'labels'
 
@@ -119,6 +120,7 @@ class DataMaster():
         # Calculate the split point based on an split/1-split ratio ex: 80/20
         split_point = int(split * len(images))
 
+        if data_split: return self.save_path
         # copy train split
         for img in tqdm(images[:split_point], desc="Copying images"):
             try:
@@ -525,6 +527,7 @@ class DataMaster():
 
 
     def draw_single_frame(self, frame, labels_file, drawn_frame, save_drawn_frame=False):
+        print(labels_file)
         with open(labels_file, 'r') as file:
             lines = file.readlines()
 
@@ -579,7 +582,7 @@ class DataMaster():
 
             color = constants.RGB_DICT[obj_num] if obj_num in constants.RGB_DICT else 'rgb(236, 3, 252)'
 
-            box_text = f" obj#: {obj_num} "
+            box_text = f" {constants.CLASSES_DICT[obj_num]} "
             # text_bbox = draw.textbbox((0, 0), box_text, font)
 
             # Draw bounding box
@@ -592,7 +595,7 @@ class DataMaster():
 
 
         if save_drawn_frame: img.save(drawn_frame)
-        return drawn_frame
+        return img
 
 
 
@@ -769,12 +772,25 @@ class DataMaster():
             file.write(f"{key} {arr[0]} {arr[1]} {arr[2]} {arr[3]} {arr[4]}\n")
 
 
-    def batch_draw_bb(self, images_dir, labels_dir, output_dir):
+    def batch_draw_bb(self, images_dir, labels_dir, output_dir, kid_ID, save_frames=False ):
 
         os.makedirs(output_dir, exist_ok=True)
 
         all_images = self.list_files_in_directory(images_dir, '.jpg')
         all_annots = self.list_files_in_directory(labels_dir, ".txt")
+
+        
+        # Get the first image to retrieve dimensions
+        first_image = cv2.imread(os.path.join(images_dir,all_images[0]))
+        height, width, _ = first_image.shape
+
+        output_video_name = output_dir.joinpath(f"{kid_ID}_predicted.mp4")
+        
+
+        # Define the codec and create VideoWriter object
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # You can also use 'XVID', 'MJPG', etc.
+        out = cv2.VideoWriter(str(output_video_name), fourcc, constants.STITCH_VIDEO_FPS, (width, height))
+
 
         for i in tqdm(range(len(all_images)), desc="Drawing annotations on images..."):
             img_path = os.path.join(images_dir, all_images[i])
@@ -784,4 +800,18 @@ class DataMaster():
             path, img_root = os.path.split(all_images[i])
             drawn_img = os.path.join(output_dir, img_root[:-4] + "_drawn.jpg")
 
-            self.draw_single_frame(img_path, text_file, drawn_img, True )
+            pred_frame = self.draw_single_frame(img_path, text_file, drawn_img, save_frames )
+            # Convert the Pillow image to a NumPy array
+            pred_frame = np.array(pred_frame)
+            # print(numpy_array, np.size(numpy_array))
+            if pred_frame.shape[-1] == 4:
+                pred_frame = cv2.cvtColor(pred_frame, cv2.COLOR_RGBA2BGRA)
+            else:
+                pred_frame = cv2.cvtColor(pred_frame, cv2.COLOR_RGB2BGR)
+            out.write(pred_frame)
+            
+        # Release VideoWriter and destroy any OpenCV windows
+        out.release()
+        cv2.destroyAllWindows()
+
+        print(f"Video saved to: {output_video_name}")

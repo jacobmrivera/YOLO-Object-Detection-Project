@@ -1,4 +1,5 @@
 
+import os
 from obj_detector.predictor import PredictorModel  # Importing the PredictorModel class from your predictor module
 from pathlib import Path
 
@@ -49,22 +50,30 @@ Description:
     deactivate
     ~~~~~~~~~~~~~~
 '''
+# model_path = Path("C:\\Users\\multimaster\\Documents\\GitHub\\YOLO-Object-Detection-Project\\YOLO-Object-Detection-Project\\yolov8m.pt")
+model_path = Path("data\\trained_models\\all_data_2_14_mirrored_v8m\weights\\best.pt")
+img_path = Path("M:\\experiment_12\\included\\__20151217_16963\\cam07_frames_p\\img_1.jpg") # will be different
+drawn_frame_output_dir = Path('M:\\experiment_351\\included\\__20151217_16963\\supporting_files\\bbox_frames_child')
+annot_output_dir = Path('M:\\experiment_351\\included\\__20151217_16963\\supporting_files\\bbox_annotations_child')
 
-model_path = Path("All_Data_Trainings\\all_data_2_14_mirrored_v8m\\weights\\best.pt")
-img_path = Path("C:\\Users\\multimaster\\Desktop\\dynamic_vids_to_predict\\frames") # will be different
-drawn_frame_output_dir = img_path.parent
-annot_output_dir = img_path.parent
+
+# drawn_frame_output_dir = img_path.parent
+# annot_output_dir = img_path.parent
 
 def main():
     # instatiate PredictorModel class with model path
     predictor = PredictorModel(model_path)
+
+    os.makedirs(drawn_frame_output_dir, exist_ok=True)
+    os.makedirs(annot_output_dir, exist_ok=True)
+
 
     # predict objects in image
     predictor.predict_image(
         img=img_path, 
         drawn_frame_output_path=drawn_frame_output_dir, 
         annot_output_path=annot_output_dir,
-        save_yolo_img=False, 
+        save_yolo_img=True, 
         save_conf=True, 
         normalize_annot=True
     )

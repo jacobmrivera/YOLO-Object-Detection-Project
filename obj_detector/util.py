@@ -3,7 +3,9 @@ import os
 import shutil
 import obj_detector as op
 from tqdm import tqdm
-import constants
+from obj_detector import constants
+
+# import constants
 
 
 # if number of frames to be over 04d, then change the 4 in the f-string to the number of digits

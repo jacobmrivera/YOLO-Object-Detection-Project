@@ -56,8 +56,11 @@ Description:
 
 
 model_path = Path("yolov8s.pt")
-dataset_path = Path(".")
+dataset_path = Path("data\\exp12_training_data")
 class_dict = constants.CLASSES_DICT
+
+project_name = "exp12_attempt" # name of the project for various trainings, example: "experiment_12"
+training_run_name = "run" # name of individual training for a project, example: "train1"
 
 def main():
 
@@ -65,13 +68,13 @@ def main():
         "model": model_path,
         "epochs": 1000,
         "device": 0, # set to 'cpu' or delete if no GPU
-        "project_name": "All_Data_Trainings",
-        "run_name": "run1",
+        "project": project_name,
+        "name": training_run_name,
     }
 
 
     trainer = Trainer(args=args_dict, dataset_path=dataset_path, class_dict=class_dict)
-    trainer.train(show_output=True)
+    trainer.train(show_output=True, data_split=True)
     
     return
 

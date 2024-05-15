@@ -2,8 +2,6 @@ from obj_detector.predictor import PredictorModel  # Importing the PredictorMode
 from obj_detector.data import DataMaster
 from pathlib import Path
 import os
-# import obj_detector.util as util
-
 
 
 '''
@@ -22,8 +20,16 @@ import os
     ~~~~~~~~~~~~~~
 '''
 MODEL_PATH = Path("data\\trained_models\\all_data_2_14_mirrored_v8m\\weights\\best.pt")
-OUTPUT_PATH = Path("Z:\\Jacob\\YOLO_Predicted")
 TOP_EXP_DIR = Path("M:\\experiment_351\\included")
+
+CHILD_FRAMES_DIR_NAME = "cam07_frames_p"
+PARENT_FRAMES_DIR_NAME = "cam08_frames_p"
+
+
+
+smooth_annotations = True
+draw_frames = True
+save_individual_drawn_frames = False
 
 
 def main():
@@ -35,37 +41,52 @@ def main():
     dataHandler = DataMaster(MODEL_PATH)
 
     for sub in subject_directories:
+        OUTPUT_ROOT = TOP_EXP_DIR.joinpath(sub, 'supporting_files')
+
+        agent = "child"
+        output_video_path = OUTPUT_ROOT.joinpath(f"bbox_video_{agent}")
+        output_annot_path = OUTPUT_ROOT.joinpath(f"bbox_annotations_{agent}")
+
+        os.makedirs(output_video_path, exist_ok=True)
+        os.makedirs(output_annot_path, exist_ok=True)
+
+
         # cam 7
-        frames_path = sub / "cam07_frames_p" 
-        sub_output = OUTPUT_PATH / Path(sub.name + "_cam07_frames_predicted_data")
+        frames_path = TOP_EXP_DIR.joinpath(sub, CHILD_FRAMES_DIR_NAME)
 
-        # set up the labels and output paths
-        labels_path = sub_output / "predicted_labels"
-        os.makedirs(labels_path, exist_ok=True)
         print(f"Processing: {frames_path}")
-        # Predict frames 
-        predictor.predict_frames(frames_dir = frames_path,
-                                 annot_output_path = labels_path)
-        # smooth the annotations
-        dataHandler.smooth_annotations(input_dir=labels_path)
+        predictor.predict_frames(frames_dir=frames_path, annot_output_path=output_annot_path, drawn_frame_output_path=output_video_path)
 
+        # smooth the annotations
+        if smooth_annotations:
+            dataHandler.smooth_annotations(input_dir=output_annot_path)
+        
+        # draw the annotations onto the frames
+        if draw_frames:
+            dataHandler.batch_draw_bb(images_dir=frames_path, labels_dir=output_annot_path, output_dir=output_video_path, kid_ID=kid_ID,save_frames=save_individual_drawn_frames)
+    
 
         # cam 8
-        frames_path = sub / "cam08_frames_p" 
+        agent = "parent"
+        output_video_path = OUTPUT_ROOT.joinpath(f"bbox_video_{agent}")
+        output_annot_path = OUTPUT_ROOT.joinpath(f"bbox_annotations_{agent}")
+
+        os.makedirs(output_video_path, exist_ok=True)
+        os.makedirs(output_annot_path, exist_ok=True)
+
+        frames_path = TOP_EXP_DIR.joinpath(sub, "cam08_frames_p")
+
         print(f"Processing: {frames_path}")
+        predictor.predict_frames(frames_dir=frames_path, annot_output_path=output_annot_path, drawn_frame_output_path=output_video_path)
 
-        sub_output = OUTPUT_PATH / Path(sub.name + "_cam08_frames_predicted_data")
-
-        # set up the labels and output paths
-        labels_path = sub_output / "predicted_labels"
-        os.makedirs(labels_path, exist_ok=True)
-
-        # Predict frames 
-        predictor.predict_frames(frames_dir = frames_path,
-                                 annot_output_path = labels_path)
         # smooth the annotations
-        dataHandler.smooth_annotations(input_dir=labels_path)
-
+        if smooth_annotations:
+            dataHandler.smooth_annotations(input_dir=output_annot_path)
+        
+        # draw the annotations onto the frames
+        if draw_frames:
+            dataHandler.batch_draw_bb(images_dir=frames_path, labels_dir=output_annot_path, output_dir=output_video_path, kid_ID=kid_ID,save_frames=save_individual_drawn_frames)
+    
 
 if __name__ == "__main__":
     main()

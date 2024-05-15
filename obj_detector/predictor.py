@@ -54,9 +54,11 @@ class PredictorModel:
         # Visualize the results on the frame
         annotated_frame = results[0].plot()
 
-        # Save the frame as an image
+       
+
         if save_yolo_img:
-            out_img = drawn_frame_output_path / img.split('.')[0] + "_pred.jpg"
+            # Save the frame as an image
+            out_img = drawn_frame_output_path.joinpath(img.stem + "_pred.jpg")
             # print(out_img)
             cv2.imwrite(out_img, annotated_frame)
 
@@ -232,16 +234,18 @@ class PredictorModel:
         
         '''
         all_frames = self.list_files_in_directory(frames_dir, ".jpg")
+        if not all_frames:
+            print("No image files found in the directory.")
+            return
+
         # labels_path = video_path.parent / "pred_labels"
         for file in tqdm(all_frames, desc="Predicting frames"):
             full_path = Path(os.path.join(frames_dir, file))
 
-            self.predict_image(full_path, annot_output_path=annot_output_path, drawn_frame_output_path=drawn_frame_output_path, save_yolo_img=save_yolo_img, save_conf=save_conf, normalize_annot=normalize_annot)
-            # print("~~~"*10)
-        return
-    
+            drawn_img = self.predict_image(full_path, annot_output_path=annot_output_path, drawn_frame_output_path=drawn_frame_output_path, save_yolo_img=save_yolo_img, save_conf=save_conf, normalize_annot=normalize_annot)
 
-        # Sorting function to handle file names with integers
+
+     # Sorting function to handle file names with integers
     # without, sorts like 1, 10, 100, 1000, 1001
     def __natural_sort_key(self, filename):
         # Split the filename into parts of digits and non-digits
