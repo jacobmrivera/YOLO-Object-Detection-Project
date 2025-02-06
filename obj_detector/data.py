@@ -76,9 +76,10 @@ class DataMaster():
 
 
     """
-    def __init__(self, dataset_path:str|Path, class_dict=constants.CLASSES_DICT, save_path=None) -> None:
+    def __init__(self, dataset_path, class_dict=constants.CLASSES_DICT, color_dict=constants.RGB_DICT, save_path=None) -> None:
         self.dataset_path = Path(dataset_path)
         self.class_dict = class_dict
+        self.color_dict = color_dict
         self.save_path = save_path if save_path is not None else Path(self.dataset_path / f'{datetime.date.today().isoformat()}_Training-data')
 
         # Set a seed for reproducibility
@@ -95,6 +96,8 @@ class DataMaster():
         for ext in constants.SUPPORTED_EXTENSIONS:
             images.extend(sorted((self.dataset_path / 'images').rglob(f"*{ext}")))
 
+        ## possible bug self.save_path is always unique so it is was create before It will create a new instance
+        ## which is nested inside the first created instance
         # save_path = Path(self.dataset_path / f'{datetime.date.today().isoformat()}_Split-data')
         self.save_path.mkdir(parents=True, exist_ok=True)
 
@@ -210,7 +213,7 @@ class DataMaster():
             lbl_name_x = Path(lbl_name_root + "_mirror_acr_x.txt")
 
             self.mirror_image_x(img, save_path_images / img_name_x)
-            self.process_text_file(lbl, save_path_labels / lbl_name_x, 'x')
+            self.process_text_file(lbl, (save_path_labels / lbl_name_x), 'x')
 
 
             ############### y ################
@@ -253,7 +256,7 @@ class DataMaster():
             print("Unable to load image")
 
     # Mirrors an image across the y axis -- vertically  <- | ->
-    def mirror_image_y(input_image_path, output_image_path) -> None:
+    def mirror_image_y(self, input_image_path, output_image_path) -> None:
         try:
             # Open the image file
             with Image.open(input_image_path) as img:
@@ -273,7 +276,7 @@ class DataMaster():
             print("Unable to load image")
 
     # Mirrors an image across the y and x axis 
-    def mirror_image_xy(input_image_path, output_image_path) -> None:
+    def mirror_image_xy(self, input_image_path, output_image_path) -> None:
         try:
             # Open the image file
             with Image.open(input_image_path) as img:
@@ -291,15 +294,15 @@ class DataMaster():
             print("Unable to load image")
 
     # Mirror bounding box values array across x axis 
-    def mirror_bounding_box_x_axis(bb_array) -> list[float]:
+    def mirror_bounding_box_x_axis(self, bb_array) -> list[float]:
         return [bb_array[0], 1 - bb_array[1], bb_array[2], bb_array[3]]
     
     # Mirror bounding box values array across y axis 
-    def mirror_bounding_box_y_axis(bb_array) -> list[float]:
+    def mirror_bounding_box_y_axis(self, bb_array) -> list[float]:
         return [1 - bb_array[0], bb_array[1], bb_array[2], bb_array[3]]
 
     # Mirror bounding box values array across x and y axis 
-    def mirror_bounding_box_xy(bb_array) -> list[float]:
+    def mirror_bounding_box_xy(self, bb_array) -> list[float]:
         return [1 - bb_array[0], 1 - bb_array[1], bb_array[2], bb_array[3]]
 
 
@@ -317,7 +320,7 @@ class DataMaster():
 
             if len(curr_line_arr) < 2: 
                 continue
-
+            
             # might be a problem with indexing to avoid the obj number (first element)
             if direction == 'y':
                 bb_array = self.mirror_bounding_box_y_axis(curr_line_arr[1:])
@@ -527,7 +530,7 @@ class DataMaster():
 
 
     def draw_single_frame(self, frame, labels_file, drawn_frame, save_drawn_frame=False):
-        print(labels_file)
+        #print(labels_file)
         with open(labels_file, 'r') as file:
             lines = file.readlines()
 
@@ -547,8 +550,7 @@ class DataMaster():
         padding = int(base_padding * min(img_width, img_height) / 800)  # Adjust the divisor as needed
 
         # Define font and size
-        font = ImageFont.truetype("data/fonts/lato/Lato-Bold.ttf", font_size)  # Adjust font and size as needed
-
+        font = ImageFont.truetype(r"C:\Users\multimaster\Documents\YOLO-Object-Detection-Project\data\fonts\lato\Lato-Bold.ttf", font_size)  # Adjust font and size as needed
 
         for line in lines:
             # Split the line into components
@@ -580,9 +582,10 @@ class DataMaster():
                 x_min = x_max
                 x_min = temp
 
-            color = constants.RGB_DICT[obj_num] if obj_num in constants.RGB_DICT else 'rgb(236, 3, 252)'
+            color = self.color_dict[obj_num] if obj_num in self.color_dict else 'rgb(236, 3, 252)'
 
-            box_text = f" {constants.CLASSES_DICT[obj_num]} "
+
+            box_text = f" {self.class_dict[obj_num]} "
             # text_bbox = draw.textbbox((0, 0), box_text, font)
 
             # Draw bounding box
@@ -637,16 +640,6 @@ class DataMaster():
 
 
 
-
-
-
-
-
-
-
-
-
-
     # Given two bounding box annotations and the number of frames to fill in for,
     # returns a list of bounding box coordinates arrays
     # 
@@ -691,6 +684,7 @@ class DataMaster():
         current dict has the items that i want to check if future frames are missing.
         '''
         file_dicts = []
+        smooth_files = []
 
         # create an array of dictionarys of the next n files
         for f in next_files:
@@ -721,7 +715,18 @@ class DataMaster():
 
                     # add extrapolated points to files missing it
                     for fix in range(index):
-                        self.add_line_to_txt(next_files[fix], i, avg_annot[fix])
+                        #with open(r"C:\Users\multimaster\documents\retinaFace_dilab\metadata\debugg-lerp.txt", "a") as f:
+                            # delete non interpolated file and change its extension
+                        curr = next_files[fix]
+                        parts = curr[:-4].split("_")
+
+                        if parts[-1] == "lerp":
+                            next = curr
+                        else:
+                            next = curr[:-4] + "_lerp.txt"
+                            smooth_files.append(curr)
+                            shutil.copyfile(curr, next)
+                        self.add_line_to_txt(next, i, avg_annot[fix])
                     missed = 0
                     break
                 elif (i not in d.keys() ):
@@ -729,6 +734,7 @@ class DataMaster():
                 elif i in d.keys() and missed == 0:
                     break
                 index += 1
+        return smooth_files
 
     # input: 
     #   input_dir: directory containing text files
@@ -737,17 +743,30 @@ class DataMaster():
     #   none
     def smooth_annotations(self, input_dir, max_skip=constants.MAX_SKIPS):
 
+        smooth_files = []
         text_files = self.list_files_in_directory(input_dir, '.txt')
         text_files = [os.path.join(input_dir, j) for j in text_files]
         # print(text_files)
 
-        for i in tqdm(range(0, len(text_files) - max_skip- 2), total=len(text_files) - max_skip):
+        for i in tqdm(range(0, len(text_files) - max_skip- 2), total=len(text_files) - max_skip, desc="Smoothing annotations..."):
             # gets the next max_skips + 1 files to check for skipping objs
             look_aheads = [text_files[i + j] for j in range(1, max_skip + 2)]
 
-            self.check_window(text_files[i], look_aheads)
+            temp_smooth = self.check_window(text_files[i], look_aheads)
+            
+            for temp in temp_smooth:
+                if temp not in smooth_files:
+                    smooth_files.append(temp)
 
-
+        
+        # remove old files that were lerped 
+        for rm_file in tqdm(smooth_files, desc="cleaning up files.."):
+            ## DEGUGGING ## 
+            #temp_path = rm_file.split("\\")
+            #temp_path.pop(5)
+            #temp_path.insert(5, "temp")
+            #mv_path = "\\".join(temp_path)
+            os.remove(rm_file)
 
     # returns a dictionary version of bb txt file with
     # obj num as the key
@@ -786,11 +805,9 @@ class DataMaster():
 
         output_video_name = output_dir.joinpath(f"{kid_ID}_predicted.mp4")
         
-
         # Define the codec and create VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # You can also use 'XVID', 'MJPG', etc.
         out = cv2.VideoWriter(str(output_video_name), fourcc, constants.STITCH_VIDEO_FPS, (width, height))
-
 
         for i in tqdm(range(len(all_images)), desc="Drawing annotations on images..."):
             img_path = os.path.join(images_dir, all_images[i])

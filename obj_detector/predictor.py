@@ -64,7 +64,7 @@ class PredictorModel:
 
         predicted_bb = self.predictions_to_arr(results)
 
-        text_name =  str(img).split("\\")[-1].split('.')[0] + ('_pred_c.txt' if save_conf else '_pred.txt')
+        text_name =  str(img).split("\\")[-1].split(".")[0] + ".txt"
         output_path = os.path.join(annot_output_path, text_name)
 
         self.predicts_to_txt(predicted_bb, output_path, width, height, save_conf)
